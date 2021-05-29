@@ -1,0 +1,15 @@
+apiVersion: v1
+name: deployment
+version: 1.0.4
+description: The Universal Deployment Helm Chart
+keywords:
+  - deployment
+  - helm
+  - devops-nirvana
+home: https://github.com/DevOps-Nirvana/Universal-Kubernetes-Helm-Charts
+sources:
+  - https://devops-nirvana.s3.amazonaws.com/helm-charts/
+  - https://github.com/DevOps-Nirvana/Universal-Kubernetes-Helm-Charts/charts/deployment
+maintainers:
+  - name: Farley Farley
+    email: farley@neonsurge.com

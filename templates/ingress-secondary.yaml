@@ -1,0 +1,64 @@
+{{- if .Values.ingress_secondary.enabled -}}
+################################################
+# Standardized Templates - Ingress
+# Author/Maintainer: Farley <farley@neonsurge.com>
+################################################
+{{- $fullName := include "name" . }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  # Old without template override: name: {{ template "name" . }}
+  name: {{ template "ingress_secondary.name" . }}
+  # SHOULD USE name: {{ template "name" . }}
+  # include labels for this service to identify it.  This helper automatically generated the labels: so do not specify it here
+{{- include "labels" . | indent 2 }}
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress_secondary.nginx_class | quote }}
+{{ if .Values.ingress_secondary.nginx_affinity }}
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "route"
+    nginx.ingress.kubernetes.io/session-cookie-path: "/"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+    nginx.ingress.kubernetes.io/connection-proxy-header: '""'
+{{- end }}
+  {{- with .Values.ingress_secondary.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  rules:
+  {{- range .Values.ingress_secondary.hosts }}
+    - host: {{ tpl .host $ | quote }}
+      http:
+        paths:
+      {{- if .enableMultiPath -}}
+        {{- range .paths }}
+          - path: {{ .path }}
+            backend:
+              serviceName: {{ .serviceName }}
+              servicePort: {{ .servicePort }}
+        {{- end }}
+      {{- else }}
+        {{- range .paths }}
+          - path: {{ . }}
+            backend:
+              serviceName: {{ $fullName }}
+              servicePort: 80
+        {{- end }}
+      {{- end }}
+  {{- end }}
+
+{{- with .Values.ingress_secondary.tls }}
+  tls:
+{{- range . }}
+      - hosts:
+        {{- range $elem, $elemVal := .hosts }}
+        - {{ tpl $elemVal $ | quote }}
+        {{- end }}
+        {{- if .secretName }}
+        secretName: {{ tpl .secretName $ | quote }}
+        {{- end }}
+{{- end }}
+{{- end -}}
+
+{{- end }}

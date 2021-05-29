@@ -1,0 +1,255 @@
+# REQUIRED for you to set a value here, name of your service
+name: ""
+
+# Number of pods in deployment, default of not highly available (override on HA environments)
+replicaCount: 1
+
+# minReadySeconds
+minReadySeconds: false
+
+# Rollback limit
+revisionHistoryLimit: 10
+
+# Image repository location (override if needed)
+image:
+  # Which image to release (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY, eg from dockerhub)
+  tag: ""
+  # What sub-folder/path it is in
+  path: ""
+  # Which repo to use (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY)
+  repository: ""
+  # Which command to run (NOTE: ONLY SPECIFY IF YOU NEED, IF NOT SPECIFIED WILL USE DOCKER DEFAULT)
+  command: []
+  # What args to pass to the command (NOTE: ONLY SPECIFY IF YOU NEED, IF NOT SPECIFIED WILL USE DOCKER DEFAULT)
+  args: []
+  # Image pull policy: IfNotPresent / Always
+  imagePullPolicy: IfNotPresent
+
+# Ingress definitions
+ingress:
+  enabled: false
+  # If we want to override the name, RECOMMEND YOU DO NOT DO THIS UNLESS YOU NEED, it has a sane default
+  name: ""
+  # If we want to have affinity in nginx enabled
+  nginx_affinity: true
+  # This is for the nginx controllers, this should be set to the controller that is intended to route your service
+  nginx_class: "infrastructure"
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - /
+  tls: []
+
+# Secondary ingress definition
+ingress_secondary:
+  enabled: false
+  # If we want to override the name, RECOMMEND YOU DO NOT DO THIS UNLESS YOU NEED, it has a sane default
+  name: ""
+  # If we want to have affinity in nginx enabled
+  nginx_affinity: true
+  # This is for the nginx controllers, this should be set to the controller that is intended to route your service
+  nginx_class: "infrastructure"
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - /
+  tls: []
+
+# Service definitions
+service:
+  enabled: true
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+  name: default
+  # externalTrafficPolicy: Local
+
+# Additional container ports to open
+# This can allow scraping by prometheus, or exposure to other services
+additionalPorts: []
+  # - containerPort: 8001
+  #   name: http-admin
+  #   protocol: TCP
+
+# If we want some service annotations
+serviceAnnotations: {}
+# serviceAnnotations:
+#   thisis: "a test"
+
+# Additional pod annotations
+podAnnotations: {}
+  # tick: "1528451892"
+
+# Additional labels put onto anything that can be labelled (pods, services)
+labels: {}
+# This enables the "default" label we automatically put everywhere (app: <name>)
+labelsEnableDefault: true
+
+# This adds lifecycle events for the deployment
+lifecycle: {}
+
+# Environment variables (for globals, all deployments)
+globalEnvs: []
+
+# A secondary source for env variables (eg: for a specific env (eg: dev, or staging))
+extraEnvs: []
+
+# A way to pull secondary env variables from configmaps and secrets
+envFrom: []
+
+# If ambassador is enabled
+ambassador:
+  enabled: false
+  # prefix: /api/<servicename>  # Note: Only specify this if you want a custom prefix
+  # rewrite: "/"  # By default we do not rewrite, uncomment this and specify the path if you wish to rewrite
+  precedence: 1
+  timeout_ms: 30000
+  cors:
+    origins: "*"
+    methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD
+    headers: Content-Type, Authorization
+    credentials: true
+    max_age: "86400"
+
+# livenessProbes are used to determine when to restart a container
+livenessProbe:
+  enabled: true
+  # For the liveness probe we'll wait a full 2 minutes, just incase this service takes a while to start-up
+  initialDelaySeconds: 120
+  periodSeconds: 10
+  timeoutSeconds: 9
+  successThreshold: 1
+  failureThreshold: 3
+
+  # Specify either httpGet, tcpSocket or exec
+  # httpGet uses path and port (below)
+  # tcpSocket uses port (below)
+  # exec uses command (below)
+  probeType: httpGet
+
+  # parameters for probes
+  path: /alive
+  port: default
+  command:
+    - ls -la /
+
+
+# readinessProbes are used to determine when a container is ready to start accepting traffic
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 4
+  successThreshold: 2
+  failureThreshold: 2
+
+  # Specify either httpGet, tcpSocket or exec
+  # httpGet uses path and port (below)
+  # tcpSocket uses port (below)
+  # exec uses command (below)
+  probeType: httpGet
+
+  # parameters for probes
+  path: /ready
+  port: default
+  command:
+    - ls -la /
+
+# Lower the ndots value, to reduce the search path expansion of DNS queries
+# https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-config
+dnsConfig:
+  enabled: false
+  ndots: 2
+
+# container resource requests/limits
+# this is set VERY low by default, to be aggressive above resource limiting, please override this if necessary
+# Note: Limits are HARD Limits
+#       Requests are "soft" limits and are what affects HPA (autoscaling) aggressiveness and are what is guaranteed
+resources: {}
+
+# limits:
+#  cpu: 100m
+#  memory: 64Mi
+# requests:
+#  cpu: 50m
+#  memory: 32Mi
+
+# Assign pods to nodes based on nodeSelector labels, define a default here if desired
+nodeSelector: []
+# purpose: node-feature-name
+
+# Assign pods to nodes based on tolerations and taints
+tolerations: []
+
+# Init container(s)
+initContainers: []
+  # - name: volume-mount-hack
+  #   image: busybox
+  #   command: ["sh", "-c", "chown -R 1000:1000 /var/chaindata"]
+  #   volumeMounts:
+  #    - name: data
+  #      mountPath: /var/chaindata
+
+# Additional containers to be added to the pod (eg: add the cloudsql proxy)
+extraContainers: []
+
+# Volumes added to the pod eg: for cloudsql
+volumes: []
+volumeMounts: []
+
+# Security context options, should default to run as non root enabled, but for now not
+security:
+  runAsNonRoot: false
+  runAsUser: 1000
+  fsGroup: 1000
+
+# For AWS Security Groups
+securityGroupIDs: []
+
+# Whether or not to enable autoscaling
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 75
+  targetMemoryUtilizationPercentage: 90
+
+# Whether or not we want a pod disruption budget, enabled by default, but this only is enabled if replicaCount > 1
+podDistuptionBudget:
+  enabled: true
+  # maxUnavailable: 1
+  minAvailable: 1
+
+# What deployment strategy to use
+deploymentStrategy:
+  # Recreate / RollingUpdate
+  type: RollingUpdate
+  rollingUpdate:
+    # Minimize downtime by only having one unavailable allowed at a time
+    maxUnavailable: 25%
+    # Allow up to 1 new pod to be spun up at a time
+    maxSurge: 25%
+
+# This is so we can use the same tag on various different objects (eg: statefulsets, crons, etc) via our Gitlab CI Automation
+global:
+  image:
+    tag: ""
+  # This can be used Gitlab CI and helm automatically to set our URIs based on namespace
+  namespace: ""
+
+sidecar:
+  enabled: false
+
+# This is for service accounts
+serviceAccount:
+  # Disabled by default, set to true if you want
+  enabled: false
+  # Add annotations if desited, 
+  annotations: {}
+    # Here's an example of assigning an IAM role to a pod
+    # eks.amazonaws.com/role-arn: arn:aws:iam::123123123:role/role-name-goes-here
+
+# If we want a hostname set for this deployment
+hostname: ""

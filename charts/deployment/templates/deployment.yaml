@@ -1,0 +1,334 @@
+################################################
+# Standardized Templates - Deployment
+# Author/Maintainer: Farley <farley@neonsurge.com>
+################################################
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  # should use name: {{ template "name" . }}
+  name: {{ template "name" . }}
+{{- include "labels" . | indent 2 }}
+
+# Deployment specification
+spec:
+
+  # Number of pod replicas desired, only use if HPA is not defined...
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ required "Specify replicaCount" .Values.replicaCount }}
+{{- end }}
+
+{{- if .Values.minReadySeconds }}
+  # Only on deployments define minimum number of seconds before being ready
+  minReadySeconds: {{ .Values.minReadySeconds }}
+{{- end }}
+
+{{- if .Values.revisionHistoryLimit }}
+  # Only on deployments define how many revision we keep how many old replica sets for this deployment
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+{{- end }}
+
+  # How we rollout in a rolling update type scenario, this is for deployments only
+  strategy:
+{{- with .Values.deploymentStrategy }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+
+  # These selectors to match this object with previous versions of this object
+  selector:
+    matchLabels:
+{{- if .Values.labelsEnableDefault }}
+      app: {{ template "name" . }}
+{{- end }}
+{{- if .Values.labels }}
+{{ toYaml .Values.labels | indent 6 }}
+{{- end }}
+
+  # This is the podTemplate, the bread and butter
+  template:
+    metadata:
+{{- include "labels" . | indent 6 -}}
+{{- if .Values.podAnnotations }}
+      annotations:
+{{ toYaml .Values.podAnnotations | indent 8 }}
+{{- end }}
+    spec:
+
+      # If we have a hostname set, set it here
+{{- if .Values.hostname }}
+      hostname: {{ with .Values.hostname }}{{ tpl . $ | quote }}{{- end }}
+{{- end }}
+
+      # How long to wait till forced termination
+      terminationGracePeriodSeconds: {{ default "30" .Values.terminationGracePeriodSeconds }}
+
+      # To have features such as run as non root
+{{- if (eq .Values.security.runAsNonRoot true) }}
+      securityContext:
+{{ toYaml .Values.security | indent 8 }}
+{{- end }}
+
+      # If we have any init containers
+      initContainers:
+{{- with .Values.initContainers }}
+{{ toYaml . | indent 8 }}
+{{- end }}
+
+      # Our list of container(s)
+      containers:
+
+        # The primary container for our service
+        - name: {{ template "name" . }}
+          image: "{{ template "get-repository" . }}:{{ template "get-release-tag" . }}"
+
+{{- if .Values.image.command }}
+          command: {{- range .Values.image.command }}
+            - {{ . | quote }}
+          {{- end }}
+{{- end }}
+
+{{- if .Values.image.args }}
+          args: {{- range .Values.image.args }}
+            - {{ . | quote }}
+          {{- end }}
+{{- end }}
+
+{{- if .Values.image.imagePullPolicy }}
+          imagePullPolicy: {{ .Values.image.imagePullPolicy }}
+{{- end }}
+
+
+{{- if .Values.lifecycle }}
+          lifecycle:
+{{ toYaml .Values.lifecycle | indent 12 }}
+{{- end }}
+
+
+          env:
+            # Default env variables we want all containers to have
+            - name: "POD_NAME"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: "POD_NAMESPACE"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: "NAMESPACE"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+
+            # Insert globals here, special handling so we can "tpl" these values and use eg: namespace in them
+            {{- range .Values.globalEnvs }}
+            - name: {{ .name | quote }}
+              {{- if .value }}
+              value: {{ with .value }}{{ tpl . $ | quote }}{{- end }}
+              {{- end }}
+              {{- if .valueFrom }}
+              valueFrom:
+{{ .valueFrom | toYaml | indent 16 }}
+              {{- end }}
+            {{- end }}
+
+            {{- range .Values.extraEnvs }}
+            - name: {{ .name | quote }}
+              {{- if .value }}
+              value: {{ with .value }}{{ tpl . $ | quote }}{{- end }}
+              {{- end }}
+              {{- if .valueFrom }}
+              valueFrom:
+{{ .valueFrom | toYaml | indent 16 }}
+              {{- end }}
+            {{- end }}
+
+# If we want to pull env variables from other confimgaps or secrets
+          envFrom:
+            {{- with .Values.envFrom }}
+{{ toYaml . | indent 12 }}
+            {{- end }}
+
+# If we have services enabled lets expose their ports
+{{- if .Values.service.enabled }}
+          ports:
+            - name: {{ .Values.service.name }}
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+            # Of course a service can use additional ports if desired
+            {{- if .Values.additionalPorts }}
+{{ toYaml .Values.additionalPorts | indent 12 }}
+            {{- end }}
+{{ end }}
+
+# This is for our liveness probes, which dictate if a pod is healthy or should be replaced
+{{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+{{- if eq .Values.livenessProbe.probeType "httpGet" }}
+            httpGet:
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ .Values.livenessProbe.port }}
+{{- else if eq .Values.livenessProbe.probeType "tcpSocket" }}
+            tcpSocket:
+              port: {{ .Values.livenessProbe.port }}
+{{- else if eq .Values.livenessProbe.probeType "exec" }}
+            exec:
+              command:
+{{- with .Values.livenessProbe.command }}
+{{ toYaml . | indent 16 }}
+{{- end -}}
+{{- end -}}
+{{- end }}
+
+# This is for our readiness probes, which dictate if a pod is ready to receive traffic
+{{- if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+{{- if eq .Values.readinessProbe.probeType "httpGet" }}
+            httpGet:
+              path: {{ .Values.readinessProbe.path }}
+              port: {{ .Values.readinessProbe.port }}
+{{- else if eq .Values.readinessProbe.probeType "tcpSocket" }}
+            tcpSocket:
+              port: {{ .Values.readinessProbe.port }}
+{{- else if eq .Values.readinessProbe.probeType "exec" }}
+            exec:
+              command:
+{{- with .Values.readinessProbe.command }}
+{{ toYaml . | indent 16 }}
+{{- end -}}
+{{- end -}}
+{{- end }}
+
+# Modify /etc/resolv.conf ndots
+{{- if .Values.dnsConfig.enabled }}
+      dnsConfig:
+        options:
+          - name: ndots
+            value: {{ .Values.dnsConfig.ndots | quote}}
+{{- end }}
+
+# This defines our resource limits
+          resources:
+{{- if .Values.resources }}
+{{- with .Values.resources }}
+{{ toYaml . | indent 12 }}
+{{- end -}}
+{{- end }}
+
+# This defines any volume mounts we might want, only occurs if set
+          volumeMounts:
+{{- if .Values.volumeMounts }}
+{{- with .Values.volumeMounts }}
+{{ toYaml . | indent 12 }}
+{{- end -}}
+{{- end }}
+
+# This is for definining sidecars
+{{- with .Values.extraContainers }}
+{{ toYaml . | indent 8}}
+{{- end }}
+
+{{- if .Values.sidecar.enabled }}
+        - name: {{ .Values.sidecar.name }}
+          image: {{ .Values.sidecar.image }}
+
+  {{- if .Values.image.imagePullPolicy }}
+          imagePullPolicy: {{ .Values.image.imagePullPolicy }}
+  {{- end }}
+
+          env:
+            # Default env variables we want all containers to have
+            - name: "POD_NAME"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: "POD_NAMESPACE"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: "NAMESPACE"
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+
+            # Global variables placed in a "global" values file for all environments
+            {{- if .Values.globalEnvs }}
+{{ toYaml .Values.globalEnvs | indent 12 }}
+            {{- end }}
+            # Environment specific variables placed in an environment values file
+            {{- if .Values.extraEnvs }}
+{{ toYaml .Values.extraEnvs | indent 12 }}
+            {{ end }}
+
+{{ end }}
+
+# This limits which nodes we want to run on
+{{- if .Values.nodeSelector }}
+      nodeSelector:
+{{- with .Values.nodeSelector }}
+{{ toYaml . | indent 8 }}
+{{- end -}}
+{{- end }}
+
+# This is pod affinity and anti-affinity, to determine where to schedule pods
+      affinity:
+        # For now, by default, we want to prefer (but not require) that pods do not get
+        # scheduled on the same availability zone, to get actual redundancy between zone failures
+        # We have this priority set very low (10) so that if someone wants they can specify
+        # rules with higher priority in the affinity value.
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ template "name" . }}
+          - weight: 100
+            podAffinityTerm:
+              topologyKey: "failure-domain.beta.kubernetes.io/zone"
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ template "name" . }}
+{{- if .Values.affinity }}
+{{ toYaml .Values.affinity | indent 8 }}
+{{- end }}
+
+# Tolerations is another form of affinity/anti-affinity that is dynamic, nodes
+# can be assigned tolerations which can affect pods
+      tolerations:
+{{- with .Values.tolerations }}
+{{ toYaml . | indent 8 }}
+{{- end }}
+
+# This is our volume definitions, if we have volume mounts
+      volumes:
+{{- if .Values.volumes }}
+{{- with .Values.volumes }}
+{{ toYaml . | indent 8 }}
+{{- end -}}
+{{- end }}
+
+# Service Account creation
+{{- if .Values.serviceAccount.enabled }}
+      serviceAccountName: {{ template "name" . }}
+{{- end }}

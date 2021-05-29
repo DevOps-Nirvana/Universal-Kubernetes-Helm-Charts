@@ -1,0 +1,44 @@
+{{- if .Values.service.enabled }}
+################################################
+# Standardized Templates - Service
+# Author/Maintainer: Farley <farley@neonsurge.com>
+################################################
+apiVersion: v1
+kind: Service
+
+metadata:
+  # Should use name: {{ template "name" . }}
+  name: {{ template "name" . }}
+
+  annotations:
+    # Our general annotations
+{{- with .Values.serviceAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+    # Our ambassador-specific annotation, to expose this api publicly via Ambassador API Gateway (if specified)
+{{- if .Values.ambassador.enabled }}
+{{ template "ambassador" . }}
+{{- end }}
+
+  # include labels for this service to identify it
+{{- include "labels" . | indent 2 }}
+
+# Service definition
+spec:
+  type: {{ .Values.service.type }}
+{{- if .Values.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
+{{- end }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: TCP
+      name: {{ .Values.service.name }}
+  selector:
+{{- if .Values.labelsEnableDefault }}
+    app: {{ template "name" . }}
+{{- end }}
+{{- if .Values.labels }}
+{{ toYaml .Values.labels | indent 4 }}
+{{- end }}
+{{- end }}

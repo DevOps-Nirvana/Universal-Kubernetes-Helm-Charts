@@ -1,0 +1,27 @@
+{{- if .Values.podDistuptionBudget.enabled -}}
+{{- if or (gt .Values.replicaCount 1.0) ( and (.Values.autoscaling.enabled) (gt .Values.autoscaling.minReplicas 1.0) )  }}
+################################################
+# Standardized Templates - Pod Disruption Budget (pdb)
+# Author/Maintainer: Farley <farley@neonsurge.com>
+################################################
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "name" . }}
+spec:
+{{- if .Values.podDistuptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.podDistuptionBudget.maxUnavailable }}
+{{- end }}
+{{- if .Values.podDistuptionBudget.minAvailable }}
+  minAvailable: {{ .Values.podDistuptionBudget.minAvailable }}
+{{- end }}
+  selector:
+    matchLabels:
+{{- if .Values.labelsDisableDefault }}
+      app: {{ template "name" . }}
+{{- end }}
+{{- if .Values.labels }}
+{{ toYaml .Values.labels | indent 6 }}
+{{- end }}
+{{- end }}
+{{- end }}
