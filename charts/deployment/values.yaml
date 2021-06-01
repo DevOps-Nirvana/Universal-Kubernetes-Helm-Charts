@@ -63,7 +63,7 @@ service:
   type: ClusterIP
   port: 80
   targetPort: 80
-  name: default
+  name: default-service
   # externalTrafficPolicy: Local
 
 # Additional container ports to open
@@ -131,7 +131,7 @@ livenessProbe:
 
   # parameters for probes
   path: /alive
-  port: default
+  port: default-service
   command:
     - ls -la /
 
@@ -153,7 +153,7 @@ readinessProbe:
 
   # parameters for probes
   path: /ready
-  port: default
+  port: default-service
   command:
     - ls -la /
 
