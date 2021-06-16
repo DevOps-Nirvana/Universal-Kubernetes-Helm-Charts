@@ -20,3 +20,7 @@ Then after this use the "deployment" helm chart within this repo with your own v
 * Add some backwards compatibility with older/newer versions (eg: API version dynamic based on version of k8s)
 * Auto-publish updates of helm charts via Github Actions
 * Profit...?  :P
+
+# Contact
+
+For information/questions either file an issue on Github or Email farley _at_ neonsurge **dot** com
