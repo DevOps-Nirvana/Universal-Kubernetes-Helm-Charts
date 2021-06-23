@@ -20,7 +20,6 @@ metadata:
     nginx.ingress.kubernetes.io/session-cookie-path: "/"
     nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
-    nginx.ingress.kubernetes.io/connection-proxy-header: '""'
 {{- end }}
   {{- with .Values.ingress_secondary.annotations }}
     {{- toYaml . | nindent 4 }}
