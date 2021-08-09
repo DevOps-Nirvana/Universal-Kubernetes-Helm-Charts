@@ -14,7 +14,7 @@ Then after this use the "deployment" helm chart within this repo with your own v
 # TODO
 
 * Add more info in this file to help others integrate with this 
-* Add back the other charts with the latest best-practices (cron, daemonset, statefulset)
+* Add back the other charts with the latest best-practices (daemonset, statefulset)
 * Add examples and documentation
 * Add tests to ensure no breakage
 * Add some backwards compatibility with older/newer versions (eg: API version dynamic based on version of k8s)

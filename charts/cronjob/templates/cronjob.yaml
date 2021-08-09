@@ -1,0 +1,142 @@
+################################################
+# Standardized Templates - Cronjob 
+# Author/Maintainer: Farley <farley@neonsurge.com>
+# TODO: This needs to be tested and re-aligned to deployment/statefulset standards
+################################################
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "name" . }}
+{{- include "labels" . | indent 2 }}
+spec:
+  schedule: {{ required "Please specify cronjob schedule, eg 0 0 * * * for once-per-day." .Values.schedule | quote }}
+  concurrencyPolicy: {{ default "Forbid" .Values.concurrencyPolicy | quote }}
+  successfulJobsHistoryLimit: {{ default 1 .Values.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ default 1 .Values.failedJobsHistoryLimit }}
+  startingDeadlineSeconds: {{ default 60 .Values.startingDeadlineSeconds }}
+  jobTemplate:
+    metadata:
+      name: {{ template "name" . }}
+{{- include "labels" . | indent 6 }}
+    spec:
+      backoffLimit: {{ default 1 .Values.backoffLimit }}
+      parallelism: {{ default 1 .Values.parallelism }}
+      completions: {{ default 1 .Values.completions }}
+      template:
+        metadata:
+          name: {{ template "name" . }}
+{{- include "labels" . | indent 10 }}
+{{- if .Values.podAnnotations }}
+          annotations:
+{{ toYaml .Values.podAnnotations | indent 12 }}
+{{- end }}
+        spec:
+          restartPolicy: {{ default "Never" .Values.restartPolicy }}
+          # If we have a hostname set, set it here
+          {{- if .Values.hostname }}
+          hostname: {{ with .Values.hostname }}{{ tpl . $ | quote }}{{- end }}
+          {{- end }}
+
+        # To have features such as run as non root
+        {{- if (eq .Values.security.runAsNonRoot true) }}
+          securityContext:
+{{ toYaml .Values.security | indent 12 }}
+        {{- end }}
+
+        {{- with .Values.nodeSelector }}
+          nodeSelector:
+{{ toYaml . | indent 12 }}
+        {{- end }}
+
+        # Tolerations is another form of affinity/anti-affinity that is dynamic, nodes
+        # can be assigned tolerations which can affect pods
+        {{- with .Values.tolerations }}
+          tolerations:
+{{ toYaml . | indent 12 }}
+        {{- end }}
+
+      # If we have any init containers
+          {{- with .Values.initContainers }}
+          initContainers:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+
+          containers:
+{{with .Values.extraContainers }}
+# This is for definining extraContainers (sidecars)
+{{ toYaml . | indent 12}}
+{{- end }}
+
+            # The primary container for our service
+            - name: {{ template "name" . }}
+              image: "{{ template "get-repository" . }}:{{ template "get-release-tag" . }}"
+
+{{- if .Values.image.command }}
+              command: {{- range .Values.image.command }}
+                - {{ . | quote }}
+              {{- end }}
+{{- end }}
+
+{{- if .Values.image.args }}
+              args: {{- range .Values.image.args }}
+                - {{ . | quote }}
+              {{- end }}
+{{- end }}
+
+{{- if .Values.image.imagePullPolicy }}
+              imagePullPolicy: {{ .Values.image.imagePullPolicy }}
+{{- end }}
+              env:
+                # Default env variables we want all containers to have
+                - name: "POD_NAME"
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+                - name: "POD_NAMESPACE"
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+                # Global variables placed in a "global" values file for all environments
+                {{- if .Values.globalEnvs }}
+{{ toYaml .Values.globalEnvs | indent 16 }}
+                {{- end }}
+                # Environment specific variables placed in an environment values file
+                {{- if .Values.extraEnvs }}
+{{ toYaml .Values.extraEnvs | indent 16 }}
+                {{- end }}
+
+# If we want to pull env variables from other confimgaps or secrets
+              envFrom:
+                {{- with .Values.envFrom }}
+{{ toYaml . | indent 16 }}
+                {{- end }}
+
+# This defines our resource limits
+              resources:
+{{ toYaml .Values.resources | indent 16 }}
+
+# This defines any volume mounts we might want, only occurs if set
+              volumeMounts:
+{{- if .Values.volumeMounts }}
+{{- with .Values.volumeMounts }}
+{{ toYaml . | indent 16 }}
+{{- end -}}
+{{- end }}
+
+
+# This limits which nodes we want to run on
+# TODO: NEED TO TEST ALL ITEMS BELOW THIS, UNTESTED!!!
+
+# Modify /etc/resolv.conf ndots
+{{- if .Values.dnsConfig.enabled }}
+          dnsConfig:
+            options:
+              - name: ndots
+                value: {{ .Values.dnsConfig.ndots | quote}}
+{{- end }}
+
+# This is our volume definitions, if we have volume mounts
+{{- with .Values.volumes }}
+          volumes:
+{{ toYaml . | indent 12 }}
+{{- end }}

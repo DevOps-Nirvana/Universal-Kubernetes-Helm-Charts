@@ -1,3 +1,5 @@
+# Default values for a "deployment"
+
 # REQUIRED for you to set a value here, name of your service
 name: ""
 
@@ -60,6 +62,7 @@ ingress_secondary:
 # Service definitions
 service:
   enabled: true
+  annotations: {}
   type: ClusterIP
   port: 80
   targetPort: 80
@@ -73,17 +76,13 @@ additionalPorts: []
   #   name: http-admin
   #   protocol: TCP
 
-# If we want some service annotations
-serviceAnnotations: {}
-# serviceAnnotations:
-#   thisis: "a test"
-
 # Additional pod annotations
 podAnnotations: {}
   # tick: "1528451892"
 
 # Additional labels put onto anything that can be labelled (pods, services)
 labels: {}
+
 # This enables the "default" label we automatically put everywhere (app: <name>)
 labelsEnableDefault: true
 

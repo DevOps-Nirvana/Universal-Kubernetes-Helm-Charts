@@ -236,11 +236,13 @@ spec:
 {{- end -}}
 {{- end }}
 
-# This is for definining sidecars
+# This is for definining sidecars which DOES NOT use the same env vars
 {{- with .Values.extraContainers }}
 {{ toYaml . | indent 8}}
 {{- end }}
 
+# This is for defining a sidecar which DOES automatically use the same env vars as the main pod
+# TODO: Make this an array instead, like extraContainers above?
 {{- if .Values.sidecar.enabled }}
         - name: {{ .Values.sidecar.name }}
           image: {{ .Values.sidecar.image }}

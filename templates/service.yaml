@@ -11,8 +11,12 @@ metadata:
   name: {{ template "name" . }}
 
   annotations:
-    # Our general annotations
+    # Our service annotations (old method, backwards compatability)
 {{- with .Values.serviceAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+    # Our service annotations (new)
+{{- with .Values.service.annotations }}
 {{ toYaml . | indent 4 }}
 {{- end }}
     # Our ambassador-specific annotation, to expose this api publicly via Ambassador API Gateway (if specified)
