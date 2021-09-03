@@ -226,9 +226,9 @@ deploymentStrategy:
   # Recreate / RollingUpdate
   type: RollingUpdate
   rollingUpdate:
-    # Minimize downtime by only having one unavailable allowed at a time
+    # Minimize downtime by only having only 25 percent max unavailable.  If you're only at 3 pods, because 33% it won't kill any pods before one gets healthy first.
     maxUnavailable: 25%
-    # Allow up to 1 new pod to be spun up at a time
+    # Allows up to 25% more pods to be created when trying to roll out.  If you're at 10 pods, it'll spin up 2 new ones (20%) and when healthy will wait for termination of old ones to ensure compliance of 25%
     maxSurge: 25%
 
 # This is so we can use the same tag on various different objects (eg: statefulsets, crons, etc) via our Gitlab CI Automation
