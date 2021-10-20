@@ -17,9 +17,16 @@ spec:
 {{- end }}
   selector:
     matchLabels:
-{{- if .Values.labelsDisableDefault }}
+{{- if .Values.usingNewRecommendedLabels }}
+{{- if .Values.labelsEnableDefault }}
+      app.kubernetes.io/name: {{ template "name" . }}
+{{- end }}
+{{- else }}
+{{- if .Values.labelsEnableDefault }}
       app: {{ template "name" . }}
 {{- end }}
+{{- end }}
+
 {{- if .Values.labels }}
 {{ toYaml .Values.labels | indent 6 }}
 {{- end }}

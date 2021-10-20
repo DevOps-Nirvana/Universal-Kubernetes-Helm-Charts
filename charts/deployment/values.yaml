@@ -80,6 +80,11 @@ additionalPorts: []
 podAnnotations: {}
   # tick: "1528451892"
 
+# If you're using Kubernetes 1.21+ you'll need to enable this, this uses the new common label scheme
+# See: https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/
+# This is set to "false" by default for backwards compatibility reasons
+usingNewRecommendedLabels: false
+
 # Additional labels put onto anything that can be labelled (pods, services)
 labels: {}
 
@@ -245,7 +250,7 @@ sidecar:
 serviceAccount:
   # Disabled by default, set to true if you want
   enabled: false
-  # Add annotations if desited, 
+  # Add annotations if desited,
   annotations: {}
     # Here's an example of assigning an IAM role to a pod
     # eks.amazonaws.com/role-arn: arn:aws:iam::123123123:role/role-name-goes-here

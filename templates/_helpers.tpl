@@ -44,6 +44,24 @@ Sample Usage: {{- include "labels" . | indent 2 }}
 */}}
 {{- define "labels" }}
 labels:
+
+{{- if .Values.usingNewRecommendedLabels }}
+# see: https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/
+
+{{- if .Values.labelsEnableDefault }}
+  app.kubernetes.io/name: {{ .Values.name | trunc 63 | trimSuffix "-" | quote }}
+  app.kubernetes.io/instance: {{ .Values.name | trunc 63 | trimSuffix "-" | quote }}
+{{- end }}
+  app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
+  app.kubernetes.io/component: {{ .Chart.Name | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
+  app.kubernetes.io/created-by: "DevOps-Nirvana"
+  app.kubernetes.io/managed-by: "helm"
+{{ if .Values.labels -}}
+{{ toYaml .Values.labels | indent 2 }}
+{{- end }}
+
+{{- else -}}
+
 {{- if .Values.labelsEnableDefault }}
   app: {{ .Values.name | trunc 63 | trimSuffix "-" | quote }}
 {{- end }}
@@ -54,6 +72,8 @@ labels:
   generator: "helm"
 {{ if .Values.labels -}}
 {{ toYaml .Values.labels | indent 2 }}
+{{- end }}
+
 {{- end }}
 
 {{- end }}
