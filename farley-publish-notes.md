@@ -10,10 +10,12 @@ export CI_COMMIT_TAG=1.0.9
 sed -i "s/1.0.0/$CI_COMMIT_TAG/g" charts/*/Chart.yaml
 cd charts && for CURRENT_HELM_CHART in $(ls -d */ | tr '/' ' '); do helm package -u $CURRENT_HELM_CHART; done && cd ..
 export AWS_DEFAULT_REGION=us-east-1
+ls -la charts/*.tgz
 for PUSH_HELM_CHART_TGZ in $(find ./charts -maxdepth 1 -name "*.tgz"); do helm s3 push --acl="public-read" $PUSH_HELM_CHART_TGZ devopsnirvanas3; done
 # for PUSH_HELM_CHART_TGZ in $(find ./charts -maxdepth 1 -name "*.tgz"); do helm s3 push --acl="public-read" $PUSH_HELM_CHART_TGZ devopsnirvanas3 --force; done
 # Grab the index.yaml file that is s3:// and make it https://
 rm -f charts/*.tgz
+rm -f index.yaml || true
 wget https://devops-nirvana.s3.amazonaws.com/helm-charts/index.yaml
 cat index.yaml | \
 gsed "s/s3:/https:/g" | \
