@@ -305,7 +305,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
               labelSelector:
                 matchExpressions:
-                - key: app
+                - key: {{ if .Values.labelsEnableDefault }}app.kubernetes.io/name{{ else }}app{{ end }}
                   operator: In
                   values:
                   - {{ template "name" . }}
@@ -314,7 +314,7 @@ spec:
               topologyKey: "failure-domain.beta.kubernetes.io/zone"
               labelSelector:
                 matchExpressions:
-                - key: app
+                - key: {{ if .Values.labelsEnableDefault }}app.kubernetes.io/name{{ else }}app{{ end }}
                   operator: In
                   values:
                   - {{ template "name" . }}
