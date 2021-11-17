@@ -10,7 +10,9 @@ schedule: ""
 cronjobs:
   - name: dummy # REQUIRED
     schedule: "12 0 * * 0"  # Optional, if not set use above definition at schedule
-    command: "executeme"    # Optional, if not set use top level definition in image.command
+    command:
+     - executeme            # Optional, if not set use top level definition in image.command
+     - also
     args:                   # Optional, if not set use top level definition in image.args
     - doesnt
     - work

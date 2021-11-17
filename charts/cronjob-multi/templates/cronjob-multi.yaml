@@ -12,9 +12,9 @@ metadata:
   labels:
     app: {{ template "name" $toplevel }}
     cronjob-app: {{ $job.name | quote }}
-{{- include "labels_without_key_or_name" $toplevel | indent 4 }}
+{{ include "labels_without_key_or_name" $toplevel | indent 4 }}
 spec:
-  schedule: {{- if $job.schedule }}{{ $job.schedule | quote }}{{ else }}{{ required "Please specify cronjob schedule, eg 0 0 * * * for once-per-day." $toplevel.Values.schedule | quote }}{{ end }}
+  schedule: {{ if $job.schedule }}{{ $job.schedule | quote }}{{ else }}{{ required "Please specify cronjob schedule, eg 0 0 * * * for once-per-day." $toplevel.Values.schedule | quote }}{{ end }}
   concurrencyPolicy: {{ default "Forbid" $toplevel.Values.concurrencyPolicy | quote }}
   successfulJobsHistoryLimit: {{ default 1 $toplevel.Values.successfulJobsHistoryLimit }}
   failedJobsHistoryLimit: {{ default 3 $toplevel.Values.failedJobsHistoryLimit }}
@@ -85,7 +85,7 @@ spec:
 
 {{- if $job.command }}
               command: {{- range $job.command }}
-                - {{ . }}
+                - {{ . | quote }}
               {{- end }}
 {{- else if $toplevel.Values.image.command }}
               command: {{- range $toplevel.Values.image.command }}
@@ -95,7 +95,7 @@ spec:
 
 {{- if $job.args }}
               args: {{- range $job.args }}
-                - {{ . }}
+                - {{ . | quote }}
               {{- end }}
 {{- else if $toplevel.Values.image.args }}
               args: {{- range $toplevel.Values.image.args }}
