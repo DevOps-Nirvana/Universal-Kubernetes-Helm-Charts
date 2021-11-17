@@ -1,0 +1,169 @@
+################################################
+# Standardized Templates - Cronjob Multi
+# Author/Maintainer: Farley <farley@neonsurge.com>
+################################################
+{{- $toplevel := . }}
+{{- range $job := .Values.cronjobs }}
+
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ $job.name | quote }}
+  labels:
+    app: {{ template "name" $toplevel }}
+    cronjob-app: {{ $job.name | quote }}
+{{- include "labels_without_key_or_name" $toplevel | indent 4 }}
+spec:
+  schedule: {{- if $job.schedule }}{{ $job.schedule | quote }}{{ else }}{{ required "Please specify cronjob schedule, eg 0 0 * * * for once-per-day." $toplevel.Values.schedule | quote }}{{ end }}
+  concurrencyPolicy: {{ default "Forbid" $toplevel.Values.concurrencyPolicy | quote }}
+  successfulJobsHistoryLimit: {{ default 1 $toplevel.Values.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ default 3 $toplevel.Values.failedJobsHistoryLimit }}
+  startingDeadlineSeconds: {{ default 600 $toplevel.Values.startingDeadlineSeconds }}
+  jobTemplate:
+    metadata:
+      name: {{ $job.name | quote }}
+      labels:
+        app: {{ template "name" $toplevel }}
+        cronjob-app: {{ $job.name | quote }}
+{{- include "labels_without_key_or_name" $toplevel | indent 8 }}
+    spec:
+      backoffLimit: {{ default 0 $toplevel.Values.backoffLimit }}
+      parallelism: {{ default 1 $toplevel.Values.parallelism }}
+      completions: {{ default 1 $toplevel.Values.completions }}
+      template:
+        metadata:
+          name: {{ $job.name | quote }}
+          labels:
+            app: {{ template "name" $toplevel }}
+            cronjob-app: {{ $job.name | quote }}
+{{- include "labels_without_key_or_name" $toplevel | indent 12 }}
+
+{{- if $toplevel.Values.podAnnotations }}
+          annotations:
+{{ toYaml $toplevel.Values.podAnnotations | indent 12 }}
+{{- end }}
+        spec:
+          restartPolicy: {{ default "Never" $toplevel.Values.restartPolicy }}
+          # If we have a hostname set, set it here
+          {{- if $toplevel.Values.hostname }}
+          hostname: {{ with $toplevel.Values.hostname }}{{ tpl . $ | quote }}{{- end }}
+          {{- end }}
+
+        # To have features such as run as non root
+        {{- if (eq $toplevel.Values.security.runAsNonRoot true) }}
+          securityContext:
+{{ toYaml $toplevel.Values.security | indent 12 }}
+        {{- end }}
+
+        {{- with $toplevel.Values.nodeSelector }}
+          nodeSelector:
+{{ toYaml . | indent 12 }}
+        {{- end }}
+
+        # Tolerations is another form of affinity/anti-affinity that is dynamic, nodes
+        # can be assigned tolerations which can affect pods
+        {{- with $toplevel.Values.tolerations }}
+          tolerations:
+{{ toYaml . | indent 12 }}
+        {{- end }}
+
+      # If we have any init containers
+          {{- with $toplevel.Values.initContainers }}
+          initContainers:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+
+          containers:
+{{with $toplevel.Values.extraContainers }}
+# This is for definining extraContainers (sidecars)
+{{ toYaml . | indent 12}}
+{{- end }}
+
+            # The primary container for our service
+            - name: {{ $job.name | quote }}
+              image: "{{ template "get-repository" $toplevel }}:{{ template "get-release-tag" $toplevel }}"
+
+{{- if $job.command }}
+              command: {{- range $job.command }}
+                - {{ . }}
+              {{- end }}
+{{- else if $toplevel.Values.image.command }}
+              command: {{- range $toplevel.Values.image.command }}
+                - {{ . | quote }}
+              {{- end }}
+{{- end }}
+
+{{- if $job.args }}
+              args: {{- range $job.args }}
+                - {{ . }}
+              {{- end }}
+{{- else if $toplevel.Values.image.args }}
+              args: {{- range $toplevel.Values.image.args }}
+                - {{ . | quote }}
+              {{- end }}
+{{- end }}
+
+{{- if $toplevel.Values.image.imagePullPolicy }}
+              imagePullPolicy: {{ $toplevel.Values.image.imagePullPolicy }}
+{{- end }}
+              env:
+                # Default env variables we want all containers to have
+                - name: "POD_NAME"
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+                - name: "POD_NAMESPACE"
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+                # Global variables placed in a "global" values file for all environments
+                {{- if $toplevel.Values.globalEnvs }}
+{{ toYaml $toplevel.Values.globalEnvs | indent 16 }}
+                {{- end }}
+                # Environment specific variables placed in an environment values file
+                {{- if $toplevel.Values.extraEnvs }}
+{{ toYaml $toplevel.Values.extraEnvs | indent 16 }}
+                {{- end }}
+
+# If we want to pull env variables from other confimgaps or secrets
+              envFrom:
+                {{- with $toplevel.Values.envFrom }}
+{{ toYaml . | indent 16 }}
+                {{- end }}
+
+# This defines our resource limits
+              resources:
+{{ toYaml $toplevel.Values.resources | indent 16 }}
+
+# This defines any volume mounts we might want, only occurs if set
+              volumeMounts:
+{{- if $toplevel.Values.volumeMounts }}
+{{- with $toplevel.Values.volumeMounts }}
+{{ toYaml . | indent 16 }}
+{{- end -}}
+{{- end }}
+
+
+# TODO: NEED TO TEST ALL ITEMS BELOW THIS, UNTESTED!!!
+
+# Modify /etc/resolv.conf ndots
+{{- if $toplevel.Values.dnsConfig.enabled }}
+          dnsConfig:
+            options:
+              - name: ndots
+                value: {{ $toplevel.Values.dnsConfig.ndots | quote}}
+{{- end }}
+
+# This is our volume definitions, if we have volume mounts
+{{- with $toplevel.Values.volumes }}
+          volumes:
+{{ toYaml . | indent 12 }}
+{{- end }}
+
+
+# Service Account creation
+{{- if $toplevel.Values.serviceAccount.enabled }}
+          serviceAccountName: {{ template "name" $toplevel }}
+{{- end }}
+---
+{{- end }}

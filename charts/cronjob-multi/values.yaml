@@ -1,0 +1,164 @@
+# Default values for cronjobs.
+
+# REQUIRED for you to set a value here, name of your service
+name: ""
+
+# This is the schedule of our cronjob, by default once an day at midnight
+schedule: ""
+# schedule: "0 0 * * *"  # Example for once a day at midnight (utc)
+
+cronjobs:
+  - name: dummy # REQUIRED
+    schedule: "12 0 * * 0"  # Optional, if not set use above definition at schedule
+    command: "executeme"    # Optional, if not set use top level definition in image.command
+    args:                   # Optional, if not set use top level definition in image.args
+    - doesnt
+    - work
+
+# This restricts jobs from every running concurrently
+concurrencyPolicy: "Forbid" # Can also be "Allow"
+
+# This keeps kubectl tidier removing unnecessary finished successful pods
+successfulJobsHistoryLimit: 1
+
+# This keeps kubectl tidier only showing up to the last 3 failed pods, keeping them around can help with detecting failures
+failedJobsHistoryLimit: 3
+
+# Ensures we don't try to restart, by default, will just try again on next cron iteration
+restartPolicy: "Never"  # This can also be OnFailure
+
+# The number of seconds trying to start this cron before considering it failed.  This needs to be long enough for your
+# nodes to scale up in the case of using an cluster autoscaler
+startingDeadlineSeconds: 600
+
+# How many retries this cronjob will have by default
+backoffLimit: 0
+
+# How many to run in parallel, don't use this unless you know what you're doing
+parallelism: 1
+
+# How many to run in parallel, don't use this unless you know what you're doing
+completions: 1
+
+# Image repository location (override if needed)
+image:
+  # Which image to release (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY, eg from dockerhub)
+  tag: ""
+  # Which repo to use (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY)
+  repository: ""
+  # Which command to run (NOTE: ONLY SPECIFY IF YOU NEED, IF NOT SPECIFIED WILL USE DOCKER DEFAULT)
+  command: []
+  # What args to pass to the command (NOTE: ONLY SPECIFY IF YOU NEED, IF NOT SPECIFIED WILL USE DOCKER DEFAULT)
+  args: []
+  # Image pull policy: IfNotPresent / Always
+  imagePullPolicy: IfNotPresent
+
+# Additional pod annotations
+# podAnnotations: {}
+  # tick: "1528451892"
+
+# Environment variables (for globals, all deployments)
+globalEnvs: []
+
+# A secondary source for env variables (eg: for a specific env (eg: dev, or staging))
+extraEnvs: []
+
+# Additional labels put onto anything that can be labelled
+labels: {}
+# This enables the "default" label we automatically put everywhere (app: <name>)
+labelsEnableDefault: true
+
+# A way to pull secondary env variables from configmaps and secrets
+envFrom: []
+
+# Lower the ndots value, to reduce the search path expansion of DNS queries
+# https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-config
+dnsConfig:
+  enabled: false
+  ndots: 2
+
+# container resource requests/limits
+# this is set VERY low by default, to be aggressive above resource limiting, please override this if necessary
+# Note: Limits are HARD Limits
+#       Requests are "soft" limits and are what affects HPA (autoscaling) aggressiveness and are what is guaranteed
+resources: {}
+# limits:
+#  cpu: 100m
+#  memory: 64Mi
+# requests:
+#  cpu: 50m
+#  memory: 32Mi
+
+# Assign pods to nodes based on nodeSelector labels, define a default here if desired
+nodeSelector: {}
+# purpose: node-feature-name
+
+# Assign pods to nodes based on tolerations and taints on the nodes
+tolerations: []
+# - key: "key1"
+#   operator: "Equal"
+#   value: "value1"
+#   effect: "NoSchedule"
+
+# Init container(s)
+initContainers: []
+  # - name: volume-mount-hack
+  #   image: busybox
+  #   command: ["sh", "-c", "chown -R 1000:1000 /var/chaindata"]
+  #   volumeMounts:
+  #    - name: data
+  #      mountPath: /var/chaindata
+
+# Volumes added to the pod eg: for cloudsql
+volumes: []
+volumeMounts: []
+
+# Security context options, should default to run as non root enabled, but for now not
+security:
+  runAsNonRoot: false
+  runAsUser: 1000
+  fsGroup: 1000
+
+# For AWS Security Groups
+securityGroupIDs: []
+
+# This is so we can use the same tag on various different objects (eg: statefulsets, crons, etc) via our Gitlab CI Automation
+global:
+  image:
+    tag: ""
+  # This can be used with CI systems and helm automatically to set our URIs based on namespace
+  namespace: ""
+
+# This is to add a sidecar with the same env vars as our primary pod
+# TODO: make this work in the cronjob
+# sidecar:
+#   enabled: false
+#   name: sidecarname
+#   image:
+#     # Which image to release (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY, eg from dockerhub)
+#     tag: ""
+#     # What sub-folder/path it is in
+#     path: ""
+#     # Which repo to use (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY)
+#     repository: ""
+#     # Which command to run (NOTE: ONLY SPECIFY IF YOU NEED, IF NOT SPECIFIED WILL USE DOCKER DEFAULT)
+#     command: []
+#     # What args to pass to the command (NOTE: ONLY SPECIFY IF YOU NEED, IF NOT SPECIFIED WILL USE DOCKER DEFAULT)
+#     args: []
+#     # Image pull policy: IfNotPresent / Always
+#     imagePullPolicy: IfNotPresent
+
+# Additional containers to be added to the pod which do not need the env vars/secrets (eg: add a cloudsql proxy)
+extraContainers: []
+
+# This is for service accounts
+serviceAccount:
+  # Disabled by default, set to true if you want
+  enabled: false
+  # Add annotations if desired,
+  annotations: {}
+    # Here's an example of assigning an IAM role to a pod in EKS
+    # eks.amazonaws.com/role-arn: arn:aws:iam::123123123:role/role-name-goes-here
+
+# If we want a hostname set for this cronjob
+hostname: ""

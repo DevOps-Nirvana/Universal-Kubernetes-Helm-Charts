@@ -1,0 +1,16 @@
+apiVersion: v1
+name: cronjob-multi
+version: 1.0.0
+description: The Universal Cronjob Multi Helm Chart, to spin up many similar cronjobs
+keywords:
+  - cronjob
+  - cronjob-multi
+  - helm
+  - devops-nirvana
+home: https://github.com/DevOps-Nirvana/Universal-Kubernetes-Helm-Charts
+sources:
+  - https://devops-nirvana.s3.amazonaws.com/helm-charts/
+  - https://github.com/DevOps-Nirvana/Universal-Kubernetes-Helm-Charts/charts/cronjob-multi
+maintainers:
+  - name: Farley Farley
+    email: farley@neonsurge.com

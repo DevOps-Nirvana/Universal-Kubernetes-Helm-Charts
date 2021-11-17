@@ -52,26 +52,40 @@ labels:
   app.kubernetes.io/name: {{ .Values.name | trunc 63 | trimSuffix "-" | quote }}
   app.kubernetes.io/instance: {{ .Values.name | trunc 63 | trimSuffix "-" | quote }}
 {{- end }}
-  app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
-  app.kubernetes.io/component: {{ .Chart.Name | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
-  app.kubernetes.io/created-by: "DevOps-Nirvana"
-  app.kubernetes.io/managed-by: "helm"
-{{ if .Values.labels -}}
-{{ toYaml .Values.labels | indent 2 }}
-{{- end }}
 
-{{- else -}}
+{{- else }}
 
 {{- if .Values.labelsEnableDefault }}
   app: {{ .Values.name | trunc 63 | trimSuffix "-" | quote }}
 {{- end }}
-  chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
-  release: {{ .Release.Name | quote }}
-  heritage: {{ .Release.Service | quote }}
-  helm_chart_author: "DevOps-Nirvana"
-  generator: "helm"
+
+{{- end }}
+
+{{ include "labels_without_key_or_name" . | indent 2 }}
+
+{{- end }}
+
+
+
+{{- define "labels_without_key_or_name" }}
+{{- if .Values.usingNewRecommendedLabels }}
+# see: https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/
+app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
+app.kubernetes.io/component: {{ .Chart.Name | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
+app.kubernetes.io/created-by: "DevOps-Nirvana"
+app.kubernetes.io/managed-by: "helm"
 {{ if .Values.labels -}}
-{{ toYaml .Values.labels | indent 2 }}
+{{ toYaml .Values.labels }}
+{{- end }}
+
+{{- else }}
+chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
+release: {{ .Release.Name | quote }}
+heritage: {{ .Release.Service | quote }}
+helm_chart_author: "DevOps-Nirvana"
+generator: "helm"
+{{ if .Values.labels -}}
+{{ toYaml .Values.labels }}
 {{- end }}
 
 {{- end }}
