@@ -1,5 +1,5 @@
 ################################################
-# Standardized Templates - Cronjob 
+# Standardized Templates - Cronjob
 # Author/Maintainer: Farley <farley@neonsurge.com>
 # TODO: This needs to be tested and re-aligned to deployment/statefulset standards
 ################################################
@@ -139,4 +139,10 @@ spec:
 {{- with .Values.volumes }}
           volumes:
 {{ toYaml . | indent 12 }}
+{{- end }}
+
+
+# Service Account creation
+{{- if .Values.serviceAccount.enabled }}
+          serviceAccountName: {{ template "name" . }}
 {{- end }}
