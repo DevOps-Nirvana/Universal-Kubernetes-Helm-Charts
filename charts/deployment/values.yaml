@@ -16,8 +16,6 @@ revisionHistoryLimit: 10
 image:
   # Which image to release (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY, eg from dockerhub)
   tag: ""
-  # What sub-folder/path it is in
-  path: ""
   # Which repo to use (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY)
   repository: ""
   # Which command to run (NOTE: ONLY SPECIFY IF YOU NEED, IF NOT SPECIFIED WILL USE DOCKER DEFAULT)

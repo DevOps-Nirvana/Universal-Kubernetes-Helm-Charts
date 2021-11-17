@@ -32,15 +32,10 @@ parallelism: 1
 # How many to run in parallel, don't use this unless you know what you're doing
 completions: 1
 
-# Additional job annotations
-jobAnnotations: {}
-
 # Image repository location (override if needed)
 image:
   # Which image to release (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY, eg from dockerhub)
   tag: ""
-  # What sub-folder/path it is in
-  path: ""
   # Which repo to use (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY)
   repository: ""
   # Which command to run (NOTE: ONLY SPECIFY IF YOU NEED, IF NOT SPECIFIED WILL USE DOCKER DEFAULT)
@@ -152,7 +147,7 @@ extraContainers: []
 serviceAccount:
   # Disabled by default, set to true if you want
   enabled: false
-  # Add annotations if desired, 
+  # Add annotations if desired,
   annotations: {}
     # Here's an example of assigning an IAM role to a pod in EKS
     # eks.amazonaws.com/role-arn: arn:aws:iam::123123123:role/role-name-goes-here

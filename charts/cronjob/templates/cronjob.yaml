@@ -12,14 +12,14 @@ spec:
   schedule: {{ required "Please specify cronjob schedule, eg 0 0 * * * for once-per-day." .Values.schedule | quote }}
   concurrencyPolicy: {{ default "Forbid" .Values.concurrencyPolicy | quote }}
   successfulJobsHistoryLimit: {{ default 1 .Values.successfulJobsHistoryLimit }}
-  failedJobsHistoryLimit: {{ default 1 .Values.failedJobsHistoryLimit }}
-  startingDeadlineSeconds: {{ default 60 .Values.startingDeadlineSeconds }}
+  failedJobsHistoryLimit: {{ default 3 .Values.failedJobsHistoryLimit }}
+  startingDeadlineSeconds: {{ default 600 .Values.startingDeadlineSeconds }}
   jobTemplate:
     metadata:
       name: {{ template "name" . }}
 {{- include "labels" . | indent 6 }}
     spec:
-      backoffLimit: {{ default 1 .Values.backoffLimit }}
+      backoffLimit: {{ default 0 .Values.backoffLimit }}
       parallelism: {{ default 1 .Values.parallelism }}
       completions: {{ default 1 .Values.completions }}
       template:
@@ -124,7 +124,6 @@ spec:
 {{- end }}
 
 
-# This limits which nodes we want to run on
 # TODO: NEED TO TEST ALL ITEMS BELOW THIS, UNTESTED!!!
 
 # Modify /etc/resolv.conf ndots
