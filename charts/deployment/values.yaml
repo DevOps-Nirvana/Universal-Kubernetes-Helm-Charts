@@ -66,6 +66,7 @@ service:
   targetPort: 80
   name: default-service
   # externalTrafficPolicy: Local
+  additionalPorts: []
 
 # Additional container ports to open
 # This can allow scraping by prometheus, or exposure to other services
