@@ -97,6 +97,9 @@ lifecycle: {}
 # Environment variables (for globals, all deployments)
 globalEnvs: []
 
+# stdin and tty status
+tty: false
+
 # A secondary source for env variables (eg: for a specific env (eg: dev, or staging))
 extraEnvs: []
 

@@ -6,7 +6,6 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  # should use name: {{ template "name" . }}
   name: {{ template "name" . }}
 {{- include "labels" . | indent 2 }}
 
@@ -87,6 +86,10 @@ spec:
         # The primary container for our service
         - name: {{ template "name" . }}
           image: "{{ template "get-repository" . }}:{{ template "get-release-tag" . }}"
+{{- if and .Values.tty (eq (.Values.tty | toString) "true") }}
+          stdin: true
+          tty: true
+{{- end }}
 
 {{- if .Values.image.command }}
           command: {{- range .Values.image.command }}
@@ -142,6 +145,7 @@ spec:
               {{- end }}
             {{- end }}
 
+            # Insert extra envs here, for sub-values files inserts, with special handling so we can "tpl" in them
             {{- range .Values.extraEnvs }}
             - name: {{ .name | quote }}
               {{- if .value }}
@@ -272,6 +276,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
 
             # Global variables placed in a "global" values file for all environments
             {{- if .Values.globalEnvs }}
