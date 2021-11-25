@@ -1,0 +1,15 @@
+apiVersion: v1
+name: statefulset
+version: 1.0.0
+description: The Universal Statefulset Helm Chart
+keywords:
+  - statefulset
+  - helm
+  - devops-nirvana
+home: https://github.com/DevOps-Nirvana/Universal-Kubernetes-Helm-Charts
+sources:
+  - https://devops-nirvana.s3.amazonaws.com/helm-charts/
+  - https://github.com/DevOps-Nirvana/Universal-Kubernetes-Helm-Charts/charts/statefulset
+maintainers:
+  - name: Farley Farley
+    email: farley@neonsurge.com
