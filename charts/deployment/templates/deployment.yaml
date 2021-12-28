@@ -306,6 +306,9 @@ spec:
         # scheduled on the same availability zone, to get actual redundancy between zone failures
         # We have this priority set very low (10) so that if someone wants they can specify
         # rules with higher priority in the affinity value.
+        #
+        # TODO: There is a bug in this, if the user sets `labelsEnableDefault` to false this doesn't work
+        #       if someone has time please fix or figure out another way around this situation
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
@@ -313,7 +316,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
               labelSelector:
                 matchExpressions:
-                - key: {{ if .Values.labelsEnableDefault }}app.kubernetes.io/name{{ else }}app{{ end }}
+                - key: {{ if .Values.usingNewRecommendedLabels }}app.kubernetes.io/name{{ else }}app{{ end }}
                   operator: In
                   values:
                   - {{ template "name" . }}
@@ -322,7 +325,7 @@ spec:
               topologyKey: "failure-domain.beta.kubernetes.io/zone"
               labelSelector:
                 matchExpressions:
-                - key: {{ if .Values.labelsEnableDefault }}app.kubernetes.io/name{{ else }}app{{ end }}
+                - key: {{ if .Values.usingNewRecommendedLabels }}app.kubernetes.io/name{{ else }}app{{ end }}
                   operator: In
                   values:
                   - {{ template "name" . }}
