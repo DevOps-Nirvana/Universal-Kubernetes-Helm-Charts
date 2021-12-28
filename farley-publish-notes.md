@@ -27,6 +27,8 @@ git add farley-publish-notes.md
 git commit -m "version bump"
 # This next one undoes the version setting in the Chart.yamls
 git reset --hard HEAD
+# Save it upstream
+git push
 
 
 # https://devops-nirvana.s3.amazonaws.com/helm-charts/index.yaml
