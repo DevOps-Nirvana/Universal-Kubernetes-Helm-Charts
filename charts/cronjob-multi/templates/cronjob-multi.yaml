@@ -162,7 +162,7 @@ spec:
 
 
 # Service Account creation
-{{- if $toplevel.Values.serviceAccount.enabled }}
+{{- if or (eq $toplevel.Values.serviceAccount.enabled true) (eq $toplevel.Values.rbac.create true) }}
           serviceAccountName: {{ template "name" $toplevel }}
 {{- end }}
 ---

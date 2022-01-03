@@ -1,0 +1,16 @@
+{{- if .Values.rbac.create -}}
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: {{ if .Values.rbac.clusterWideAccess }}"ClusterRoleBinding"{{ else }}"RoleBinding"{{ end }}
+metadata:
+  name: {{ template "name" . }}
+  # include labels for this service to identify it
+{{- include "labels" . | indent 2 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: {{ if .Values.rbac.clusterWideAccess }}"ClusterRole"{{ else }}"Role"{{ end }}
+  name: {{ template "name" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ template "name" . }}
+  namespace: "{{ .Release.Namespace }}"
+{{- end -}}

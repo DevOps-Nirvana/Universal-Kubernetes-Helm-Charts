@@ -231,3 +231,22 @@ persistence:
   size: 100Gi
   path: "/mnt/data"
   storageClass: "gp2-retain"
+
+## For RBAC support, enable if you want, and set the rules you wish, examples below
+rbac:
+  create: false
+  rules:
+    ## Define specific rbac permissions.
+    # Eg: This grants all on API groups
+    # - apiGroups: ['*']
+    #   resources: ['*']
+    #   verbs: ['*']
+    # Eg: This grants all on non resource URLs
+    # - nonResourceURLs: ['*']
+    #   verbs: ['*']
+    # Eg: This is "readonly" for common resources
+    # - resources: ["deployments", "configmaps", "pods", "pods/log", "services", "jobs", "jobs/status", "nodes", "serviceaccount", "namespaces"]
+    #   verbs: ["get", "list", "watch"]
+
+  ## Make this into a clusterwide role to give access to all namespaces if desired, disabled by default for more security
+  clusterWideAccess: false

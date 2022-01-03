@@ -79,6 +79,6 @@ spec:
 {{ toYaml .Values.resources | indent 12 }}
 
 # Service Account creation
-{{- if .Values.serviceAccount.enabled }}
+{{- if or (eq .Values.serviceAccount.enabled true) (eq .Values.rbac.create true) }}
           serviceAccountName: {{ template "name" . }}
 {{- end }}
