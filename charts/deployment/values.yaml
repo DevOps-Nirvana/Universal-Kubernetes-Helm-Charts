@@ -106,20 +106,6 @@ extraEnvs: []
 # A way to pull secondary env variables from configmaps and secrets
 envFrom: []
 
-# If ambassador is enabled
-ambassador:
-  enabled: false
-  # prefix: /api/<servicename>  # Note: Only specify this if you want a custom prefix
-  # rewrite: "/"  # By default we do not rewrite, uncomment this and specify the path if you wish to rewrite
-  precedence: 1
-  timeout_ms: 30000
-  cors:
-    origins: "*"
-    methods: GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD
-    headers: Content-Type, Authorization
-    credentials: true
-    max_age: "86400"
-
 # livenessProbes are used to determine when to restart a container
 livenessProbe:
   enabled: true
