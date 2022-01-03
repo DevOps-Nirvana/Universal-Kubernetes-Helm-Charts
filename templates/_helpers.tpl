@@ -72,7 +72,7 @@ labels:
 # see: https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/
 app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
 app.kubernetes.io/component: {{ .Chart.Name | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
-app.kubernetes.io/created-by: "DevOps-Nirvana"
+app.kubernetes.io/created-by: "devops-nirvana"
 app.kubernetes.io/managed-by: "helm"
 {{ if .Values.labels -}}
 {{ toYaml .Values.labels }}
@@ -82,7 +82,7 @@ app.kubernetes.io/managed-by: "helm"
 chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
 release: {{ .Release.Name | quote }}
 heritage: {{ .Release.Service | quote }}
-helm_chart_author: "DevOps-Nirvana"
+helm_chart_author: "devops-nirvana"
 generator: "helm"
 {{ if .Values.labels -}}
 {{ toYaml .Values.labels }}
