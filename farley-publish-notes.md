@@ -6,7 +6,7 @@ helm repo add devops-nirvana https://devops-nirvana.s3.amazonaws.com/helm-charts
 
 helm lint charts/* --set name=test,namespace=test
 # BUMP VERSION...
-export CI_COMMIT_TAG=1.0.16
+export CI_COMMIT_TAG=1.0.17
 sed -i "s/1.0.0/$CI_COMMIT_TAG/g" charts/*/Chart.yaml
 cd charts && for CURRENT_HELM_CHART in $(ls -d */ | tr '/' ' '); do helm package -u $CURRENT_HELM_CHART; done && cd ..
 export AWS_DEFAULT_REGION=us-east-1
@@ -24,7 +24,7 @@ mv -f indexnew.yaml index.yaml
 aws s3 cp ./index.yaml s3://devops-nirvana/helm-charts/ --metadata-directive REPLACE --cache-control max-age=0,no-cache,no-store,must-revalidate --acl public-read --content-type 'text/plain'
 rm -f index.yaml
 git add farley-publish-notes.md
-git commit -m "version bump"
+git commit -m "version bump to $CI_COMMIT_TAG"
 # This next one undoes the version setting in the Chart.yamls
 git reset --hard HEAD
 # Save it upstream
