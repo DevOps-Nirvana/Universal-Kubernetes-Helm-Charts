@@ -20,6 +20,8 @@ spec:
   workflowMetadata:
 {{- include "labels" . | indent 4 }}
   workflowSpec:
+    podMetadata:
+{{- include "labels" . | indent 6 }}
     entrypoint: {{ template "name" . }}
 {{- if .Values.serviceAccount.enabled }}
     serviceAccountName: {{ template "name" . }}
