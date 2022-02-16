@@ -48,6 +48,12 @@ spec:
 {{ toYaml . | indent 12 }}
         {{- end }}
 
+          # This is pod affinity and anti-affinity, to determine where to schedule pods
+          affinity:
+{{- if .Values.affinity }}
+{{ toYaml .Values.affinity | indent 12 }}
+{{- end }}
+
         # Tolerations is another form of affinity/anti-affinity that is dynamic, nodes
         # can be assigned tolerations which can affect pods
         {{- with .Values.tolerations }}
