@@ -56,7 +56,7 @@ image:
   imagePullPolicy: IfNotPresent
 
 # Additional pod annotations
-# podAnnotations: {}
+podAnnotations: {}
   # tick: "1528451892"
 
 # Environment variables (for globals, all deployments)

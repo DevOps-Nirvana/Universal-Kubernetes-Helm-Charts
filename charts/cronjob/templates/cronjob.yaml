@@ -26,9 +26,12 @@ spec:
         metadata:
           name: {{ template "name" . }}
 {{- include "labels" . | indent 10 }}
+
 {{- if .Values.podAnnotations }}
           annotations:
-{{ toYaml .Values.podAnnotations | indent 12 }}
+{{- range $k, $v := .Values.podAnnotations }}
+            {{ $k }}:  {{ with $v }}{{ tpl . $ | quote }}{{- end }}
+{{- end }}
 {{- end }}
         spec:
           restartPolicy: {{ default "Never" .Values.restartPolicy }}

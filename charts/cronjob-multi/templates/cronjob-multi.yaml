@@ -37,10 +37,11 @@ spec:
             app: {{ template "name" $toplevel }}
             cronjob-app: {{ $job.name | quote }}
 {{- include "labels_without_key_or_name" $toplevel | indent 12 }}
-
 {{- if $toplevel.Values.podAnnotations }}
           annotations:
-{{ toYaml $toplevel.Values.podAnnotations | indent 12 }}
+{{- range $k, $v := $toplevel.Values.podAnnotations }}
+            {{ $k }}:  {{ with $v }}{{ tpl . $toplevel | quote }}{{- end }}
+{{- end }}
 {{- end }}
         spec:
           restartPolicy: {{ default "Never" $toplevel.Values.restartPolicy }}

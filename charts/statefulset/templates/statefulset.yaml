@@ -56,7 +56,9 @@ spec:
 {{- include "labels" . | indent 6 -}}
 {{- if .Values.podAnnotations }}
       annotations:
-{{ toYaml .Values.podAnnotations | indent 8 }}
+{{- range $k, $v := .Values.podAnnotations }}
+        {{ $k }}:  {{ with $v }}{{ tpl . $ | quote }}{{- end }}
+{{- end }}
 {{- end }}
     spec:
 
