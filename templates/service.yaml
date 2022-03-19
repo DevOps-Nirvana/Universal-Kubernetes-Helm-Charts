@@ -26,6 +26,9 @@ metadata:
 # Service definition
 spec:
   type: {{ .Values.service.type }}
+{{- if default false .Values.service.headless }}
+  clusterIP: None
+{{- end }}
 {{- if .Values.service.externalTrafficPolicy }}
   externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
 {{- end }}
