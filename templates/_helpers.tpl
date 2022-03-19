@@ -32,10 +32,14 @@ Exmaple: {{- include "print_envs" .Values.globalEnvs | indent 12 }}
 {{- end -}}
 
 {{/*
-Create chart name and version as used by the chart label.
+Create chart name and version as used by the chart label.  Version is optional because statefulsets don't like labels being updated dynamically
 */}}
 {{- define "chart" -}}
+{{ if and (hasKey .Values "labelsIncludeChartVersion") (eq (coalesce .Values.labelsIncludeChartVersion "1" | toString) "1") }}
+{{- printf "%s" .Chart.Name | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -79,7 +83,7 @@ app.kubernetes.io/managed-by: "helm"
 {{- end }}
 
 {{- else }}
-chart: {{ printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" | quote }}
+chart: {{ include "chart" . | quote }}
 release: {{ .Release.Name | quote }}
 heritage: {{ .Release.Service | quote }}
 helm_chart_author: "devops-nirvana"

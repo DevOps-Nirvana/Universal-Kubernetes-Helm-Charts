@@ -72,6 +72,9 @@ usingNewRecommendedLabels: false
 # Additional labels put onto anything that can be labelled (pods, services)
 labels: {}
 
+# This is a tweak for the labels above to NOT include the version string, otherwise we can't upgrade statefulsets
+labelsIncludeChartVersion: false
+
 # This enables the "default" label we automatically put everywhere (app: <name>)
 labelsEnableDefault: true
 
