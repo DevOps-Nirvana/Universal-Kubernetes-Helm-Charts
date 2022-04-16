@@ -331,8 +331,23 @@ spec:
                   operator: In
                   values:
                   - {{ template "name" . }}
+{{- /*
+SORRY for this mess, this is needed because of the above
+*/}}
 {{- if .Values.affinity }}
-{{ toYaml .Values.affinity | indent 8 }}
+{{- if .Values.affinity.podAntiAffinity }}
+{{- if .Values.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution }}
+{{ toYaml .Values.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution | indent 10 }}
+{{- end }}
+{{- if .Values.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution }}
+          requiredDuringSchedulingIgnoredDuringExecution:
+{{ toYaml .Values.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution | indent 10 }}
+{{- end }}
+{{- end }}
+{{- if .Values.affinity.podAffinity }}
+        podAffinity:
+{{ toYaml .Values.affinity.podAffinity | indent 10 }}
+{{- end }}
 {{- end }}
 
 # Tolerations is another form of affinity/anti-affinity that is dynamic, nodes
