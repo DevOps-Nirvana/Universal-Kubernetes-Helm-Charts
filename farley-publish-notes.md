@@ -6,7 +6,7 @@ helm repo add devops-nirvana https://devops-nirvana.s3.amazonaws.com/helm-charts
 
 helm lint charts/* --set name=test,namespace=test
 # BUMP VERSION...
-export CI_COMMIT_TAG=1.0.21
+export CI_COMMIT_TAG=1.0.22
 sed -i "s/1.0.0/$CI_COMMIT_TAG/g" charts/*/Chart.yaml
 cd charts && for CURRENT_HELM_CHART in $(ls -d */ | tr '/' ' '); do helm package -u $CURRENT_HELM_CHART; done && cd ..
 export AWS_DEFAULT_REGION=us-east-1
