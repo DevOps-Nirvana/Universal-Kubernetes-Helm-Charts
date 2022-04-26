@@ -34,6 +34,10 @@ spec:
 {{- end }}
 {{- end }}
         spec:
+          # If we have a priority class set, set it here
+{{- if .Values.priorityClassName }}
+          priorityClassName: "{{ .Values.priorityClassName }}"
+{{- end }}
           restartPolicy: {{ default "Never" .Values.restartPolicy }}
           # If we have a hostname set, set it here
           {{- if .Values.hostname }}

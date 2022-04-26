@@ -67,6 +67,11 @@ spec:
       hostname: {{ with .Values.hostname }}{{ tpl . $ | quote }}{{- end }}
 {{- end }}
 
+      # If we have a priority class set, set it here
+{{- if .Values.priorityClassName }}
+      priorityClassName: "{{ .Values.priorityClassName }}"
+{{- end }}
+
       # How long to wait till forced termination
       terminationGracePeriodSeconds: {{ default "30" .Values.terminationGracePeriodSeconds }}
 

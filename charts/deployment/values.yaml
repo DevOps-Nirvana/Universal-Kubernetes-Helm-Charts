@@ -12,6 +12,10 @@ minReadySeconds: false
 # Rollback limit
 revisionHistoryLimit: 10
 
+# The pod priority, to make things more critical
+# See: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
+priorityClassName: ""
+
 # Image repository location (override if needed)
 image:
   # Which image to release (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY, eg from dockerhub)
