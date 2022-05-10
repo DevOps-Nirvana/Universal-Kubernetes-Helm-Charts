@@ -68,6 +68,10 @@ resources: {}
 #  cpu: 50m
 #  memory: 32Mi
 
+# Volumes added to the pod
+volumes: []
+volumeMounts: []
+
 # For AWS Security Groups
 securityGroupIDs: []
 

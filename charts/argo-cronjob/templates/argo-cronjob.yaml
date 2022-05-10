@@ -29,6 +29,12 @@ spec:
     backoffLimit: {{ default 0 .Values.backoffLimit }}
     parallelism: {{ default 1 .Values.parallelism }}
     completions: {{ default 1 .Values.completions }}
+{{- if .Values.volumes }}
+    volumes:
+{{- with .Values.volumes }}
+{{ toYaml . | indent 6 }}
+{{- end -}}
+{{- end }}
     templates:
       - name: {{ template "name" . }}
 {{- include "labels" . | indent 8 }}
@@ -83,4 +89,12 @@ spec:
 # Service Account creation
 {{- if or (eq .Values.serviceAccount.enabled true) (eq .Values.rbac.create true) }}
           serviceAccountName: {{ template "name" . }}
+{{- end }}
+
+# Volume mounts
+{{- if .Values.volumeMounts }}
+          volumeMounts:
+{{- with .Values.volumeMounts }}
+{{ toYaml . | indent 12 }}
+{{- end -}}
 {{- end }}
