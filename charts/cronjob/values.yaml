@@ -23,6 +23,9 @@ restartPolicy: "Never"  # This can also be OnFailure
 # nodes to scale up in the case of using an cluster autoscaler
 startingDeadlineSeconds: 600
 
+# The maximum runtime of a cronjob
+activeDeadlineSeconds: null
+
 # The pod priority, to make things more critical
 # See: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
 priorityClassName: ""

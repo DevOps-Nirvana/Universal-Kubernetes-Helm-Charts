@@ -22,6 +22,9 @@ spec:
       backoffLimit: {{ default 0 .Values.backoffLimit }}
       parallelism: {{ default 1 .Values.parallelism }}
       completions: {{ default 1 .Values.completions }}
+      {{- if .Values.activeDeadlineSeconds }}
+      activeDeadlineSeconds: {{ .Values.activeDeadlineSeconds }}
+      {{- end }}
       template:
         metadata:
           name: {{ template "name" . }}
