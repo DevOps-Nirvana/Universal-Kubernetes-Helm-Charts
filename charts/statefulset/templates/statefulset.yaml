@@ -380,6 +380,12 @@ SORRY for this mess, this is needed because of the above
       serviceAccountName: {{ template "name" . }}
 {{- end }}
 
+# This is our image pull secret references, if we have image pull secrets
+{{- with .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml . | indent 8 }}
+{{- end }}
+
 {{- if .Values.persistence.enabled }}
   # If we have persistence enabled, lets set it up
   volumeClaimTemplates:

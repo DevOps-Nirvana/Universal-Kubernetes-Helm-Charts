@@ -98,3 +98,9 @@ spec:
 {{ toYaml . | indent 12 }}
 {{- end -}}
 {{- end }}
+
+# This is our image pull secret references, if we have image pull secrets
+{{- with .Values.image.imagePullSecrets }}
+    imagePullSecrets:
+{{ toYaml . | indent 6 }}
+{{- end }}

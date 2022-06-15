@@ -374,3 +374,9 @@ SORRY for this mess, this is needed because of the above
 {{- if or (eq .Values.serviceAccount.enabled true) (eq .Values.rbac.create true) }}
       serviceAccountName: {{ template "name" . }}
 {{- end }}
+
+# This is our image pull secret references, if we have image pull secrets
+{{- with .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+{{ toYaml . | indent 8 }}
+{{- end }}
