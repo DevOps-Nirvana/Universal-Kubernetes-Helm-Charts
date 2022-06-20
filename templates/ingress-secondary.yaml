@@ -4,7 +4,7 @@
 # Author/Maintainer: Farley <farley@neonsurge.com>
 ################################################
 {{- $fullName := include "name" . }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   # Old without template override: name: {{ template "name" . }}
