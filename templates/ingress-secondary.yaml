@@ -1,10 +1,14 @@
 {{- if .Values.ingress_secondary.enabled -}}
+{{- $ingressApiIsStable := eq (include "ingress.isStable" .) "true" -}}
+{{- $ingressSupportsIngressClassName := eq (include "ingress.supportsIngressClassName" .) "true" -}}
+{{- $ingressSupportsPathType := eq (include "ingress.supportsPathType" .) "true" -}}
+{{- $ingressPathType := .Values.ingress_secondary.pathType -}}
 ################################################
 # Standardized Templates - Ingress
 # Author/Maintainer: Farley <farley@neonsurge.com>
 ################################################
 {{- $fullName := include "name" . }}
-apiVersion: extensions/v1beta1
+apiVersion: {{ template "ingress.apiVersion" . }}
 kind: Ingress
 metadata:
   # Old without template override: name: {{ template "name" . }}
@@ -13,7 +17,9 @@ metadata:
   # include labels for this service to identify it.  This helper automatically generated the labels: so do not specify it here
 {{- include "labels" . | indent 2 }}
   annotations:
+{{- if not .Values.ingress_secondary.ingressClassName }}
     kubernetes.io/ingress.class: {{ .Values.ingress_secondary.nginx_class | quote }}
+{{- end }}
 {{ if .Values.ingress_secondary.nginx_affinity }}
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/session-cookie-name: "route"
@@ -25,6 +31,9 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{- if and $ingressSupportsIngressClassName .Values.ingress_secondary.ingressClassName }}
+  ingressClassName: {{ .Values.ingress_secondary.ingressClassName }}
+  {{- end }}
   rules:
   {{- range .Values.ingress_secondary.hosts }}
     - host: {{ tpl .host $ | quote }}
@@ -33,16 +42,36 @@ spec:
       {{- if .enableMultiPath -}}
         {{- range .paths }}
           - path: {{ .path }}
+            {{- if $ingressSupportsPathType }}
+            pathType: {{ $ingressPathType }}
+            {{- end }}
             backend:
+              {{- if $ingressApiIsStable }}
+              service:
+                name: {{ .serviceName }}
+                port:
+                  number: {{ .servicePort }}
+              {{- else }}
               serviceName: {{ .serviceName }}
               servicePort: {{ .servicePort }}
+              {{- end }}
         {{- end }}
       {{- else }}
         {{- range .paths }}
           - path: {{ . }}
+            {{- if $ingressSupportsPathType }}
+            pathType: {{ $ingressPathType }}
+            {{- end }}
             backend:
+              {{- if $ingressApiIsStable }}
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: 80
+              {{- else }}
               serviceName: {{ $fullName }}
               servicePort: 80
+              {{- end }}
         {{- end }}
       {{- end }}
   {{- end }}

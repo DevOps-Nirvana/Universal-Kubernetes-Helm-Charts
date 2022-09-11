@@ -46,6 +46,10 @@ ingress:
   nginx_affinity: true
   # This is for the nginx controllers, this should be set to the controller that is intended to route your service
   nginx_class: "infrastructure"
+  # This is the "new" name for ingress classes, optional
+  ingressClassName: ""
+  # The path type
+  pathType: ImplementationSpecific # or Prefix
   annotations: {}
   hosts:
     - host: chart-example.local
@@ -62,6 +66,10 @@ ingress_secondary:
   nginx_affinity: true
   # This is for the nginx controllers, this should be set to the controller that is intended to route your service
   nginx_class: "infrastructure"
+  # This is the "new" name for ingress classes, optional
+  ingressClassName: ""
+  # The path type
+  pathType: ImplementationSpecific # or Prefix
   annotations: {}
   hosts:
     - host: chart-example.local
