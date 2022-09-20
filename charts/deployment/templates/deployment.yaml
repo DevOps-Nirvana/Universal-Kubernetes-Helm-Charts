@@ -81,10 +81,19 @@ spec:
 {{ toYaml .Values.security | indent 8 }}
 {{- end }}
 
+{{- /*
+  Helm Chart Author Note: We do this ridiculousness so we can dynamically template inject image name/tag into the init container(s)
+                          it is however imperfect, as it currently doesn't support variables in sub-lists or sub-maps.  Todo?
+*/}}
       # If we have any init containers
       initContainers:
 {{- with .Values.initContainers }}
-{{ toYaml . | indent 8 }}
+{{- range $initContainers := . }}
+        # Name - {{ $initContainers.name }}
+        - {{ range $k, $v := $initContainers }}
+          {{ $k }}: {{ if typeIs "string" $v }}{{ tpl $v $ | quote }}{{ else }}
+{{ toYaml $v | indent 12 }}{{ end }}{{ end }}
+{{- end }}
 {{- end }}
 
       # Our list of container(s)
