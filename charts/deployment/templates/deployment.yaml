@@ -239,14 +239,6 @@ spec:
 {{- end -}}
 {{- end }}
 
-# Modify /etc/resolv.conf ndots
-{{- if .Values.dnsConfig.enabled }}
-      dnsConfig:
-        options:
-          - name: ndots
-            value: {{ .Values.dnsConfig.ndots | quote}}
-{{- end }}
-
 # This defines our resource limits
           resources:
 {{- if .Values.resources }}
@@ -305,6 +297,30 @@ spec:
             {{- if .Values.extraEnvs }}
 {{ toYaml .Values.extraEnvs | indent 12 }}
             {{ end }}
+
+{{ end }}
+
+# Modify /etc/resolv.conf ndots
+{{ if .Values.dnsConfig.enabled }}
+      dnsConfig:
+
+{{ if .Values.dnsConfig.searches }}
+        searches:
+{{ toYaml .Values.dnsConfig.searches | indent 10 }}
+{{ end }}
+
+{{ if .Values.dnsConfig.nameservers }}
+        nameservers:
+{{ toYaml .Values.dnsConfig.nameservers | indent 10 }}
+{{ end }}
+
+        options:
+          - name: ndots
+            value: {{ .Values.dnsConfig.ndots | quote}}
+{{- if .Values.dnsConfig.options }}
+{{ toYaml .Values.dnsConfig.options | indent 10 }}
+{{ end }}
+
 
 {{ end }}
 

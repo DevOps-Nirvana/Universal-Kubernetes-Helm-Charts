@@ -170,11 +170,18 @@ readinessProbe:
   command:
     - ls -la /
 
-# Lower the ndots value, to reduce the search path expansion of DNS queries
+# Adjust the DNS configuration of your pods
 # https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-config
 dnsConfig:
   enabled: false
-  ndots: 2
+  # Optimization/Load/Scale note: Reduce the ndots value, to reduce the search path expansion of DNS queries, less impact on core-dns, default is 6, lower to 2 ideally
+  ndots: 6
+  # Customize the DNS options.  NOTE: Do not customize NDOTS here, instead use the above variable
+  options: []
+  # Customize the search domains.  Shouldn't need this normally, but useful for compatibility with legacy platforms, or for a multi-region or multi-cloud setup
+  searches: []
+  # Customize the nameservers.
+  nameservers: []
 
 # container resource requests/limits
 # this is set VERY low by default, to be aggressive above resource limiting, please override this if necessary
