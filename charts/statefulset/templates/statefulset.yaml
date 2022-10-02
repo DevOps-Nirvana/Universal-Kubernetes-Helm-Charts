@@ -140,6 +140,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             - name: "NAMESPACE"
               valueFrom:
                 fieldRef:
@@ -148,6 +152,38 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: POD_SERVICE_ACCOUNT
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+            - name: CONTAINER_CPU_REQUESTS_MILLICORES
+              valueFrom:
+                resourceFieldRef:
+                  resource: requests.cpu
+                  divisor: 1m
+            - name: CONTAINER_CPU_LIMITS_MILLICORES
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.cpu
+                  divisor: 1m
+            - name: CONTAINER_MEMORY_REQUESTS_KIBIBYTES
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.memory
+                  divisor: 1Ki
+            - name: CONTAINER_MEMORY_LIMITS_KIBIBYTES
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.memory
+                  divisor: 1Ki
 
             # Insert globals here, special handling so we can "tpl" these values and use eg: namespace in them
             {{- range .Values.globalEnvs }}
