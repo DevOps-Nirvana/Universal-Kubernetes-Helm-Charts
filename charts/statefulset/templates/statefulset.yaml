@@ -275,14 +275,6 @@ spec:
 {{- end -}}
 {{- end }}
 
-# Modify /etc/resolv.conf ndots
-{{- if .Values.dnsConfig.enabled }}
-      dnsConfig:
-        options:
-          - name: ndots
-            value: {{ .Values.dnsConfig.ndots | quote}}
-{{- end }}
-
 # This defines our resource limits
           resources:
 {{- if .Values.resources }}
@@ -419,6 +411,32 @@ SORRY for this mess, this is needed because of the above
 {{ toYaml . | indent 8 }}
 {{- end -}}
 {{- end }}
+
+
+# Modify /etc/resolv.conf ndots
+{{ if .Values.dnsConfig.enabled }}
+      dnsConfig:
+
+{{ if .Values.dnsConfig.searches }}
+        searches:
+{{ toYaml .Values.dnsConfig.searches | indent 10 }}
+{{ end }}
+
+{{ if .Values.dnsConfig.nameservers }}
+        nameservers:
+{{ toYaml .Values.dnsConfig.nameservers | indent 10 }}
+{{ end }}
+
+        options:
+          - name: ndots
+            value: {{ .Values.dnsConfig.ndots | quote}}
+{{- if .Values.dnsConfig.options }}
+{{ toYaml .Values.dnsConfig.options | indent 10 }}
+{{ end }}
+
+
+{{ end }}
+
 
 # Service Account creation
 {{- if or (eq .Values.serviceAccount.enabled true) (eq .Values.rbac.create true) }}
