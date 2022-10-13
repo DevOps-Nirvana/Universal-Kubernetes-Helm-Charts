@@ -188,12 +188,29 @@ spec:
 # TODO: NEED TO TEST ALL ITEMS BELOW THIS, UNTESTED!!!
 
 # Modify /etc/resolv.conf ndots
-{{- if .Values.dnsConfig.enabled }}
+{{ if .Values.dnsConfig.enabled }}
           dnsConfig:
+
+{{ if .Values.dnsConfig.searches }}
+            searches:
+{{ toYaml .Values.dnsConfig.searches | indent 14 }}
+{{ end }}
+
+{{ if .Values.dnsConfig.nameservers }}
+            nameservers:
+{{ toYaml .Values.dnsConfig.nameservers | indent 14 }}
+{{ end }}
+
             options:
               - name: ndots
                 value: {{ .Values.dnsConfig.ndots | quote}}
-{{- end }}
+{{- if .Values.dnsConfig.options }}
+{{ toYaml .Values.dnsConfig.options | indent 14 }}
+{{ end }}
+
+
+{{ end }}
+
 
 # This is our volume definitions, if we have volume mounts
 {{- with .Values.volumes }}
