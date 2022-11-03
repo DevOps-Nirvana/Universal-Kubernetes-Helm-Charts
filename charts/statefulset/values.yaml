@@ -179,7 +179,7 @@ resources: {}
 #  memory: 32Mi
 
 # Assign pods to nodes based on nodeSelector labels, define a default here if desired
-nodeSelector: []
+nodeSelector: {}
 # purpose: node-feature-name
 
 # Assign pods to nodes based on tolerations and taints
