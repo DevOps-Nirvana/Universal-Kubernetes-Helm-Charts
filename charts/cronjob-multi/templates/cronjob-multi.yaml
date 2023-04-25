@@ -5,7 +5,7 @@
 {{- $toplevel := . }}
 {{- range $job := .Values.cronjobs }}
 
-apiVersion: batch/v1beta1
+apiVersion: {{ template "cronjob.apiVersion" . }}
 kind: CronJob
 metadata:
   name: {{ $job.name | quote }}

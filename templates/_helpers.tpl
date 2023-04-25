@@ -207,6 +207,17 @@ Return the appropriate apiVersion for rbac.
 {{- end -}}
 
 {{/*
+Return the appropriate apiVersion for cronjob.
+*/}}
+{{- define "cronjob.apiVersion" -}}
+{{- if .Capabilities.APIVersions.Has "batch/v1" }}
+{{- print "batch/v1" -}}
+{{- else -}}
+{{- print "batch/v1beta1" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the appropriate apiVersion for ingress.
 */}}
 {{- define "ingress.apiVersion" -}}
