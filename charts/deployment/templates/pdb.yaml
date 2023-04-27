@@ -4,7 +4,7 @@
 # Standardized Templates - Pod Disruption Budget (pdb)
 # Author/Maintainer: Farley <farley@neonsurge.com>
 ################################################
-apiVersion: policy/v1beta1
+apiVersion: {{ template "pdb.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "name" . }}
