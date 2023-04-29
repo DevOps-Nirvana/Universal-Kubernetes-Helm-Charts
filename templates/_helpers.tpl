@@ -220,6 +220,17 @@ Return the appropriate apiVersion for ingress.
 {{- end -}}
 
 {{/*
+Return the appropriate apiVersion for poddisruptionbudget.
+*/}}
+{{- define "pdb.apiVersion" -}}
+  {{- if .Capabilities.APIVersions.Has "policy/v1" }}
+    {{- print "policy/v1" -}}
+  {{- else -}}
+    {{- print "policy/v1beta1" -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
 Return if ingress is stable.
 */}}
 {{- define "ingress.isStable" -}}
