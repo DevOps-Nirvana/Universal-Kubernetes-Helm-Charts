@@ -164,57 +164,57 @@ Create the name of the ingress_secondary resource (used for legacy purposes and 
 Return the appropriate apiVersion for deployment.
 */}}
 {{- define "deployment.apiVersion" -}}
-{{- print "apps/v1" -}}
+  {{- print "apps/v1" -}}
 {{- end -}}
 
 {{/*
 Return the appropriate apiVersion for daemonset.
 */}}
 {{- define "daemonset.apiVersion" -}}
-{{- print "apps/v1" -}}
+  {{- print "apps/v1" -}}
 {{- end -}}
 
 {{/*
 Return the appropriate apiVersion for statefulset.
 */}}
 {{- define "statefulset.apiVersion" -}}
-{{- print "apps/v1" -}}
+  {{- print "apps/v1" -}}
 {{- end -}}
 
 {{/*
 Return the appropriate apiVersion for networkpolicy.
 */}}
 {{- define "networkPolicy.apiVersion" -}}
-{{- print "networking.k8s.io/v1" -}}
+  {{- print "networking.k8s.io/v1" -}}
 {{- end -}}
 
 {{/*
 Return the appropriate apiVersion for podsecuritypolicy.
 */}}
 {{- define "podSecurityPolicy.apiVersion" -}}
-{{- print "policy/v1beta1" -}}
+  {{- print "policy/v1beta1" -}}
 {{- end -}}
 
 {{/*
 Return the appropriate apiVersion for rbac.
 */}}
 {{- define "rbac.apiVersion" -}}
-{{- if .Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1" }}
-{{- print "rbac.authorization.k8s.io/v1" -}}
-{{- else -}}
-{{- print "rbac.authorization.k8s.io/v1beta1" -}}
-{{- end -}}
+  {{- if (default $.Capabilities "").APIVersions.Has "rbac.authorization.k8s.io/v1" }}
+    {{- print "rbac.authorization.k8s.io/v1" -}}
+  {{- else -}}
+    {{- print "rbac.authorization.k8s.io/v1beta1" -}}
+  {{- end -}}
 {{- end -}}
 
 {{/*
 Return the appropriate apiVersion for cronjob.
 */}}
 {{- define "cronjob.apiVersion" -}}
-{{- if (default $.Capabilities "").APIVersions.Has "batch/v1" }}
-{{- print "batch/v1" -}}
-{{- else -}}
-{{- print "batch/v1beta1" -}}
-{{- end -}}
+  {{- if (default $.Capabilities "").APIVersions.Has "batch/v1" }}
+    {{- print "batch/v1" -}}
+  {{- else -}}
+    {{- print "batch/v1beta1" -}}
+  {{- end -}}
 {{- end -}}
 
 
@@ -222,8 +222,8 @@ Return the appropriate apiVersion for cronjob.
 Return the appropriate apiVersion for ingress.
 */}}
 {{- define "ingress.apiVersion" -}}
-  {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" -}}
-      {{- print "networking.k8s.io/v1" -}}
+  {{- if (default $.Capabilities "").APIVersions.Has "networking.k8s.io/v1" }}
+    {{- print "networking.k8s.io/v1" -}}
   {{- else if .Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" -}}
     {{- print "networking.k8s.io/v1beta1" -}}
   {{- else -}}
@@ -235,7 +235,7 @@ Return the appropriate apiVersion for ingress.
 Return the appropriate apiVersion for poddisruptionbudget.
 */}}
 {{- define "pdb.apiVersion" -}}
-  {{- if .Capabilities.APIVersions.Has "policy/v1" }}
+  {{- if (default $.Capabilities "").APIVersions.Has "policy/v1" }}
     {{- print "policy/v1" -}}
   {{- else -}}
     {{- print "policy/v1beta1" -}}
@@ -246,13 +246,13 @@ Return the appropriate apiVersion for poddisruptionbudget.
 Return the appropriate apiVersion for horizontalpodautoscaler.
 */}}
 {{- define "hpa.apiVersion" -}}
-{{- if $.Capabilities.APIVersions.Has "autoscaling/v2/HorizontalPodAutoscaler" }}
-{{- print "autoscaling/v2" }}
-{{- else if $.Capabilities.APIVersions.Has "autoscaling/v2beta2/HorizontalPodAutoscaler" }}
-{{- print "autoscaling/v2beta2" }}
-{{- else }}
-{{- print "autoscaling/v2beta1" }}
-{{- end }}
+  {{- if (default $.Capabilities "").APIVersions.Has "autoscaling/v2/HorizontalPodAutoscaler" }}
+    {{- print "autoscaling/v2" }}
+  {{- else if $.Capabilities.APIVersions.Has "autoscaling/v2beta2/HorizontalPodAutoscaler" }}
+    {{- print "autoscaling/v2beta2" }}
+  {{- else }}
+    {{- print "autoscaling/v2beta1" }}
+  {{- end }}
 {{- end }}
 
 {{/*
@@ -268,6 +268,7 @@ Return if ingress supports ingressClassName.
 {{- define "ingress.supportsIngressClassName" -}}
   {{- or (eq (include "ingress.isStable" .) "true") (eq (include "ingress.apiVersion" .) "networking.k8s.io/v1beta1") -}}
 {{- end -}}
+
 {{/*
 Return if ingress supports pathType.
 */}}
