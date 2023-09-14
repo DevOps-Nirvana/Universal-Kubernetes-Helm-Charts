@@ -64,6 +64,9 @@ labelsEnableDefault: true
 # A way to pull secondary env variables from configmaps and secrets
 envFrom: []
 
+# This enables the deprecated memory kibibytes env variables for backwards compatibility. TODO: Remove from future release.
+usingMemoryKibiBytesEnvs: false
+
 # container resource requests/limits
 # this is set VERY low by default, to be aggressive above resource limiting, please override this if necessary
 # Note: Limits are HARD Limits

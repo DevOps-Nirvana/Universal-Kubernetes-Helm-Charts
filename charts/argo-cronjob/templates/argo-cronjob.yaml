@@ -101,16 +101,29 @@ spec:
                 resourceFieldRef:
                   resource: limits.cpu
                   divisor: 1m
+{{- if .Values.usingMemoryKibiBytesEnvs }}
             - name: CONTAINER_MEMORY_REQUESTS_KIBIBYTES
               valueFrom:
                 resourceFieldRef:
-                  resource: limits.memory
+                  resource: requests.memory
                   divisor: 1Ki
             - name: CONTAINER_MEMORY_LIMITS_KIBIBYTES
               valueFrom:
                 resourceFieldRef:
                   resource: limits.memory
                   divisor: 1Ki
+{{- else }}
+            - name: CONTAINER_MEMORY_REQUESTS_MEGABYTES
+              valueFrom:
+                resourceFieldRef:
+                  resource: requests.memory
+                  divisor: 1Mi
+            - name: CONTAINER_MEMORY_LIMITS_MEGABYTES
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.memory
+                  divisor: 1Mi
+{{- end }}
 
             # Global variables placed in a "global" values file for all environments
             {{- if .Values.globalEnvs }}
