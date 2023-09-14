@@ -238,6 +238,7 @@ spec:
             failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
 {{- if eq .Values.livenessProbe.probeType "httpGet" }}
             httpGet:
+              scheme: {{ .Values.livenessProbe.scheme }}
               path: {{ .Values.livenessProbe.path }}
               port: {{ .Values.livenessProbe.port }}
 {{- else if eq .Values.livenessProbe.probeType "tcpSocket" }}
@@ -262,6 +263,7 @@ spec:
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
 {{- if eq .Values.readinessProbe.probeType "httpGet" }}
             httpGet:
+              scheme: {{ .Values.readinessProbe.scheme }}
               path: {{ .Values.readinessProbe.path }}
               port: {{ .Values.readinessProbe.port }}
 {{- else if eq .Values.readinessProbe.probeType "tcpSocket" }}
