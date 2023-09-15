@@ -155,7 +155,7 @@ spec:
                     resourceFieldRef:
                       resource: limits.cpu
                       divisor: 1m
-{{- if .Values.usingMemoryKibiBytesEnvs }}
+{{- if $toplevel.Values.usingMemoryKibiBytesEnvs }}
                 - name: CONTAINER_MEMORY_REQUESTS_KIBIBYTES
                   valueFrom:
                     resourceFieldRef:
