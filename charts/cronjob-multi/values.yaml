@@ -85,6 +85,9 @@ labelsEnableDefault: true
 # A way to pull secondary env variables from configmaps and secrets
 envFrom: []
 
+# This enables the deprecated memory kibibytes env variables for backwards compatibility. TODO: Remove from future release.
+usingMemoryKibiBytesEnvs: false
+
 # Lower the ndots value, to reduce the search path expansion of DNS queries
 # https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-config
 dnsConfig:

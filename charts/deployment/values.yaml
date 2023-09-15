@@ -126,6 +126,9 @@ extraEnvs: []
 # A way to pull secondary env variables from configmaps and secrets
 envFrom: []
 
+# This enables the deprecated memory kibibytes env variables for backwards compatibility. TODO: Remove from future release.
+usingMemoryKibiBytesEnvs: false
+
 # livenessProbes are used to determine when to restart a container
 livenessProbe:
   enabled: true
