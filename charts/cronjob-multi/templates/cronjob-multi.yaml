@@ -223,6 +223,11 @@ spec:
 {{ toYaml . | indent 12 }}
 {{- end }}
 
+# This is our image pull secret references, if we have image pull secrets
+{{- with $toplevel.Values.image.imagePullSecrets }}
+          imagePullSecrets:
+{{ toYaml . | indent 12 }}
+{{- end }}
 
 # Service Account creation
 {{- if or (eq $toplevel.Values.serviceAccount.enabled true) (eq $toplevel.Values.rbac.create true) }}
@@ -231,8 +236,3 @@ spec:
 ---
 {{- end }}
 
-# This is our image pull secret references, if we have image pull secrets
-{{- with .Values.image.imagePullSecrets }}
-          imagePullSecrets:
-{{ toYaml . | indent 12 }}
-{{- end }}
