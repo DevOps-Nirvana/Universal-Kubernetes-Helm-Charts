@@ -210,11 +210,7 @@ Return the appropriate apiVersion for rbac.
 Return the appropriate apiVersion for cronjob.
 */}}
 {{- define "cronjob.apiVersion" -}}
-  {{- if (default $.Capabilities "").APIVersions.Has "batch/v1" }}
-    {{- print "batch/v1" -}}
-  {{- else -}}
-    {{- print "batch/v1beta1" -}}
-  {{- end -}}
+  {{ ternary "batch/v1" "batch/v1beta1" (.Capabilities.APIVersions.Has "batch/v1") }}
 {{- end -}}
 
 
