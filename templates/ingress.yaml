@@ -1,4 +1,5 @@
 {{- if .Values.ingress.enabled -}}
+{{- $toplevel := . }}
 {{- $ingressApiIsStable := eq (include "ingress.isStable" .) "true" -}}
 {{- $ingressSupportsIngressClassName := eq (include "ingress.supportsIngressClassName" .) "true" -}}
 {{- $ingressSupportsPathType := eq (include "ingress.supportsPathType" .) "true" -}}
@@ -67,10 +68,10 @@ spec:
               service:
                 name: {{ $fullName }}
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ $toplevel.Values.service.port }}
               {{- else }}
               serviceName: {{ $fullName }}
-              servicePort: {{ .Values.service.port }}
+              servicePort: {{ $toplevel.Values.service.port }}
               {{- end }}
         {{- end }}
       {{- end }}
