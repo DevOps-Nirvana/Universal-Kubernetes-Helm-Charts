@@ -106,6 +106,10 @@ spec:
           stdin: true
           tty: true
 {{- end }}
+{{- if .Values.securityContext }}
+          securityContext:
+{{ toYaml .Values.securityContext | indent 12 }}
+{{- end }}
 
 {{- if .Values.image.command }}
           command: {{- range .Values.image.command }}

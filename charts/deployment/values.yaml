@@ -37,6 +37,13 @@ image:
   ##
   imagePullSecrets: []
 
+# In case you want to change the securityContext
+# securityContext:
+#   capabilities:
+#     add:
+#     - SYS_ADMIN
+#   privileged: true
+
 # Ingress definitions
 ingress:
   enabled: false
