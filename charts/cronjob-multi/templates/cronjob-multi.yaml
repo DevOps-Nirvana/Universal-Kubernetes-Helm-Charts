@@ -19,6 +19,9 @@ spec:
   successfulJobsHistoryLimit: {{ default 1 $toplevel.Values.successfulJobsHistoryLimit }}
   failedJobsHistoryLimit: {{ default 3 $toplevel.Values.failedJobsHistoryLimit }}
   startingDeadlineSeconds: {{ default 600 $toplevel.Values.startingDeadlineSeconds }}
+  {{- if $toplevel.Values.suspend }}
+  suspend: {{ $toplevel.Values.suspend }}
+  {{- end }}
   jobTemplate:
     metadata:
       name: {{ $job.name | quote }}

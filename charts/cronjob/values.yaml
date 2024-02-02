@@ -39,6 +39,9 @@ parallelism: 1
 # How many to run in parallel, don't use this unless you know what you're doing
 completions: 1
 
+# Whether to create in the suspended state, null for backwards compatibility
+suspend: null
+
 # Image repository location (override if needed)
 image:
   # Which image to release (NOTE: ONLY SPECIFY IF YOU ARE DEPLOYING EXTERNALLY, eg from dockerhub)
