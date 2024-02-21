@@ -76,6 +76,7 @@ spec:
       terminationGracePeriodSeconds: {{ default "30" .Values.terminationGracePeriodSeconds }}
 
       # To have features such as run as non root
+      # TODO: This is superceeded by the securityContext: for the container below. Remove this in future.
 {{- if (eq .Values.security.runAsNonRoot true) }}
       securityContext:
 {{ toYaml .Values.security | indent 8 }}
@@ -111,6 +112,11 @@ spec:
           command: {{- range .Values.image.command }}
             - {{ . | quote }}
           {{- end }}
+{{- end }}
+
+{{- if .Values.securityContext }}
+          securityContext:
+{{ toYaml .Values.securityContext | indent 12 }}
 {{- end }}
 
 {{- if .Values.image.args }}

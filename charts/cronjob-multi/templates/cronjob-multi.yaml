@@ -111,6 +111,16 @@ spec:
               {{- end }}
 {{- end }}
 
+{{- if $job.securityContext }}
+              securityContext:
+{{ toYaml $job.securityContext | indent 16 }}
+{{- end }}
+{{- if $toplevel.Values.securityContext }}
+              securityContext:
+{{ toYaml $toplevel.Values.securityContext | indent 16 }}
+{{- end }}
+
+
 {{- if $toplevel.Values.image.imagePullPolicy }}
               imagePullPolicy: {{ $toplevel.Values.image.imagePullPolicy }}
 {{- end }}
