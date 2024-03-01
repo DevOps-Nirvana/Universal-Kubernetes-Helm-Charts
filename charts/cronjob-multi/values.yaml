@@ -77,7 +77,10 @@ podAnnotations: {}
 # Environment variables (for globals, all deployments)
 globalEnvs: []
 
-# A secondary source for env variables (eg: for a specific env (eg: dev, or staging))
+# Secondary environment variables (for globals, all deployments, to help with multi-inheritance)
+globalEnvsSecondary: []
+
+# A tertiary source for env variables (eg: used for a specific env (eg: dev, or staging))
 extraEnvs: []
 
 # Additional labels put onto anything that can be labelled

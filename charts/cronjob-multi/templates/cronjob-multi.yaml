@@ -184,11 +184,46 @@ spec:
 
                 # Global variables placed in a "global" values file for all environments
                 {{- if $toplevel.Values.globalEnvs }}
-{{ toYaml $toplevel.Values.globalEnvs | indent 16 }}
+                # Insert globals here, special handling so we can "tpl" these values and use eg: namespace in them
+                {{- range $toplevel.Values.globalEnvs }}
+                - name: {{ .name | quote }}
+                  {{- if .value }}
+                  value: {{ with .value }}{{ tpl . $ | quote }}{{- end }}
+                  {{- end }}
+                  {{- if .valueFrom }}
+                  valueFrom:
+    {{ .valueFrom | toYaml | indent 16 }}
+                  {{- end }}
                 {{- end }}
-                # Environment specific variables placed in an environment values file
+                {{- end }}
+
+                # Secondary environment variables (for globals, all deployments, to help with multi-inheritance)
+                {{- if $toplevel.Values.globalEnvsSecondary }}
+                # Insert globals here, special handling so we can "tpl" these values and use eg: namespace in them
+                {{- range $toplevel.Values.globalEnvsSecondary }}
+                - name: {{ .name | quote }}
+                  {{- if .value }}
+                  value: {{ with .value }}{{ tpl . $ | quote }}{{- end }}
+                  {{- end }}
+                  {{- if .valueFrom }}
+                  valueFrom:
+    {{ .valueFrom | toYaml | indent 16 }}
+                  {{- end }}
+                {{- end }}
+                {{- end }}
+
+                # Insert extra envs here, for sub-values files inserts, with special handling so we can "tpl" in them
                 {{- if $toplevel.Values.extraEnvs }}
-{{ toYaml $toplevel.Values.extraEnvs | indent 16 }}
+                {{- range $toplevel.Values.extraEnvs }}
+                - name: {{ .name | quote }}
+                  {{- if .value }}
+                  value: {{ with .value }}{{ tpl . $ | quote }}{{- end }}
+                  {{- end }}
+                  {{- if .valueFrom }}
+                  valueFrom:
+    {{ .valueFrom | toYaml | indent 16 }}
+                  {{- end }}
+                {{- end }}
                 {{- end }}
 
 # If we want to pull env variables from other confimgaps or secrets

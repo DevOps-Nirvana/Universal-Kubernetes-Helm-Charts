@@ -199,6 +199,7 @@ spec:
 {{- end }}
 
             # Insert globals here, special handling so we can "tpl" these values and use eg: namespace in them
+            {{- if .Values.globalEnvs }}
             {{- range .Values.globalEnvs }}
             - name: {{ .name | quote }}
               {{- if .value }}
@@ -209,8 +210,24 @@ spec:
 {{ .valueFrom | toYaml | indent 16 }}
               {{- end }}
             {{- end }}
+            {{- end }}
+
+            # Insert secondary globals here, special handling so we can "tpl" these values and use eg: namespace in them
+            {{- if .Values.globalEnvsSecondary }}
+            {{- range .Values.globalEnvsSecondary }}
+            - name: {{ .name | quote }}
+              {{- if .value }}
+              value: {{ with .value }}{{ tpl . $ | quote }}{{- end }}
+              {{- end }}
+              {{- if .valueFrom }}
+              valueFrom:
+{{ .valueFrom | toYaml | indent 16 }}
+              {{- end }}
+            {{- end }}
+            {{- end }}
 
             # Insert extra envs here, for sub-values files inserts, with special handling so we can "tpl" in them
+            {{- if .Values.extraEnvs }}
             {{- range .Values.extraEnvs }}
             - name: {{ .name | quote }}
               {{- if .value }}
@@ -220,6 +237,7 @@ spec:
               valueFrom:
 {{ .valueFrom | toYaml | indent 16 }}
               {{- end }}
+            {{- end }}
             {{- end }}
 
 # If we want to pull env variables from other confimgaps or secrets

@@ -117,11 +117,14 @@ lifecycle: {}
 # Environment variables (for globals, all deployments)
 globalEnvs: []
 
+# Secondary environment variables (for globals, all deployments, to help with multi-inheritance)
+globalEnvsSecondary: []
+
+# A tertiary source for env variables (eg: used for a specific env (eg: dev, or staging))
+extraEnvs: []
+
 # stdin and tty status
 tty: false
-
-# A secondary source for env variables (eg: for a specific env (eg: dev, or staging))
-extraEnvs: []
 
 # A way to pull secondary env variables from configmaps and secrets
 envFrom: []
