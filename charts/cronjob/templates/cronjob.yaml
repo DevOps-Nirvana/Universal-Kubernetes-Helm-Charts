@@ -182,7 +182,7 @@ spec:
                   {{- end }}
                   {{- if .valueFrom }}
                   valueFrom:
-    {{ .valueFrom | toYaml | indent 16 }}
+{{ .valueFrom | toYaml | indent 20 }}
                   {{- end }}
                 {{- end }}
                 {{- end }}
@@ -196,7 +196,7 @@ spec:
                   {{- end }}
                   {{- if .valueFrom }}
                   valueFrom:
-    {{ .valueFrom | toYaml | indent 16 }}
+{{ .valueFrom | toYaml | indent 20 }}
                   {{- end }}
                 {{- end }}
                 {{- end }}
@@ -210,7 +210,7 @@ spec:
                   {{- end }}
                   {{- if .valueFrom }}
                   valueFrom:
-    {{ .valueFrom | toYaml | indent 16 }}
+{{ .valueFrom | toYaml | indent 20 }}
                   {{- end }}
                 {{- end }}
                 {{- end }}
