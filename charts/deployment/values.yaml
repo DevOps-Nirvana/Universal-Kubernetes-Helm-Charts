@@ -26,7 +26,6 @@ image:
   command: []
   # What args to pass to the command (NOTE: ONLY SPECIFY IF YOU NEED, IF NOT SPECIFIED WILL USE DOCKER DEFAULT)
   args: []
-  
   # Image pull policy: IfNotPresent / Always
   imagePullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.

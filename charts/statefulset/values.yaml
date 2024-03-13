@@ -26,7 +26,6 @@ image:
   command: []
   # What args to pass to the command (NOTE: ONLY SPECIFY IF YOU NEED)
   args: []
-
   # Image pull policy: IfNotPresent / Always
   imagePullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
