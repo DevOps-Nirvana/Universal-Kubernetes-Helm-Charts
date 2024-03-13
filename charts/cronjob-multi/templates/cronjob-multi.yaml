@@ -61,6 +61,12 @@ spec:
         {{- if (eq $toplevel.Values.security.runAsNonRoot true) }}
           securityContext:
 {{ toYaml $toplevel.Values.security | indent 12 }}
+        {{- else if $job.securityContext }}
+          securityContext:
+{{ toYaml $job.securityContext | indent 12 }}
+        {{- else if $toplevel.Values.securityContext }}
+          securityContext:
+{{ toYaml $toplevel.Values.securityContext | indent 12 }}
         {{- end }}
 
         {{- with $toplevel.Values.nodeSelector }}
@@ -109,15 +115,6 @@ spec:
               args: {{- range $toplevel.Values.image.args }}
                 - {{ . | quote }}
               {{- end }}
-{{- end }}
-
-{{- if $job.securityContext }}
-              securityContext:
-{{ toYaml $job.securityContext | indent 16 }}
-{{- end }}
-{{- if $toplevel.Values.securityContext }}
-              securityContext:
-{{ toYaml $toplevel.Values.securityContext | indent 16 }}
 {{- end }}
 
 

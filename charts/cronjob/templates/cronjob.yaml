@@ -54,6 +54,9 @@ spec:
         {{- if (eq .Values.security.runAsNonRoot true) }}
           securityContext:
 {{ toYaml .Values.security | indent 12 }}
+        {{- else if .Values.securityContext }}
+          securityContext:
+{{ toYaml .Values.securityContext | indent 12 }}
         {{- end }}
 
         {{- with .Values.nodeSelector }}
@@ -100,11 +103,6 @@ spec:
               args: {{- range .Values.image.args }}
                 - {{ . | quote }}
               {{- end }}
-{{- end }}
-
-{{- if .Values.securityContext }}
-          securityContext:
-{{ toYaml .Values.securityContext | indent 12 }}
 {{- end }}
 
 {{- if .Values.image.imagePullPolicy }}

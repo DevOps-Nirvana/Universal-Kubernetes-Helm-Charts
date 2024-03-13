@@ -16,7 +16,7 @@ cronjobs:
     args:                   # Optional, if not set use top level definition in image.args
     - doesnt
     - work
-    # In case you want to change the securityContext
+    # In case you want to change the securityContext for this job
     # securityContext:
     #   capabilities:
     #     add:
@@ -65,13 +65,6 @@ image:
   command: []
   # What args to pass to the command (NOTE: ONLY SPECIFY IF YOU NEED, IF NOT SPECIFIED WILL USE DOCKER DEFAULT)
   args: []
-
-  # In case you want to change the securityContext
-  # securityContext:
-  #   capabilities:
-  #     add:
-  #     - SYS_ADMIN
-  #   privileged: true
 
   # Image pull policy: IfNotPresent / Always
   imagePullPolicy: IfNotPresent
@@ -155,6 +148,13 @@ security:
   runAsNonRoot: false
   runAsUser: 1000
   fsGroup: 1000
+
+# In case you want to change the securityContext
+# securityContext:
+#   capabilities:
+#     add:
+#     - SYS_ADMIN
+#   privileged: true
 
 # For AWS Security Groups
 securityGroupIDs: []

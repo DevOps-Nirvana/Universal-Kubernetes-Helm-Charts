@@ -27,13 +27,6 @@ image:
   # What args to pass to the command (NOTE: ONLY SPECIFY IF YOU NEED)
   args: []
 
-  # In case you want to change the securityContext
-  # securityContext:
-  #   capabilities:
-  #     add:
-  #     - SYS_ADMIN
-  #   privileged: true
-
   # Image pull policy: IfNotPresent / Always
   imagePullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
@@ -222,6 +215,13 @@ security:
   runAsNonRoot: false
   runAsUser: 1000
   fsGroup: 1000
+
+# In case you want to change the securityContext
+# securityContext:
+#   capabilities:
+#     add:
+#     - SYS_ADMIN
+#   privileged: true
 
 # For AWS Security Groups
 securityGroupIDs: []
