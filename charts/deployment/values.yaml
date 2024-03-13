@@ -233,6 +233,13 @@ security:
   runAsUser: 1000
   fsGroup: 1000
 
+# In case you want to change the securityContext
+# securityContext:
+#   capabilities:
+#     add:
+#     - SYS_ADMIN
+#   privileged: true
+
 # For AWS Security Groups
 securityGroupIDs: []
 

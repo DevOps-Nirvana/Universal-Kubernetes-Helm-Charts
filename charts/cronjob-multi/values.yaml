@@ -16,6 +16,12 @@ cronjobs:
     args:                   # Optional, if not set use top level definition in image.args
     - doesnt
     - work
+    # In case you want to change the securityContext for this job
+    # securityContext:
+    #   capabilities:
+    #     add:
+    #     - SYS_ADMIN
+    #   privileged: true
 
 # This restricts jobs from every running concurrently
 concurrencyPolicy: "Forbid" # Can also be "Allow"
@@ -141,6 +147,13 @@ security:
   runAsNonRoot: false
   runAsUser: 1000
   fsGroup: 1000
+
+# In case you want to change the securityContext
+# securityContext:
+#   capabilities:
+#     add:
+#     - SYS_ADMIN
+#   privileged: true
 
 # For AWS Security Groups
 securityGroupIDs: []
