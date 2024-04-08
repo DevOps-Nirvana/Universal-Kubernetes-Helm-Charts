@@ -58,15 +58,15 @@ spec:
           {{- end }}
 
         # To have features such as run as non root
-        {{- if (eq $toplevel.Values.security.runAsNonRoot true) }}
-          securityContext:
-{{ toYaml $toplevel.Values.security | indent 12 }}
-        {{- else if $job.securityContext }}
+        {{- if $job.securityContext }}
           securityContext:
 {{ toYaml $job.securityContext | indent 12 }}
         {{- else if $toplevel.Values.securityContext }}
           securityContext:
 {{ toYaml $toplevel.Values.securityContext | indent 12 }}
+        {{- else if (eq $toplevel.Values.security.runAsNonRoot true) }}
+          securityContext:
+{{ toYaml $toplevel.Values.security | indent 12 }}
         {{- end }}
 
         {{- with $toplevel.Values.nodeSelector }}

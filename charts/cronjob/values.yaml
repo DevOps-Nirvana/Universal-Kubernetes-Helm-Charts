@@ -136,12 +136,6 @@ initContainers: []
 volumes: []
 volumeMounts: []
 
-# Security context options, should default to run as non root enabled, but for now not
-security:
-  runAsNonRoot: false
-  runAsUser: 1000
-  fsGroup: 1000
-
 # In case you want to change the securityContext
 # securityContext:
 #   capabilities:

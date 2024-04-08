@@ -76,12 +76,12 @@ spec:
       terminationGracePeriodSeconds: {{ default "30" .Values.terminationGracePeriodSeconds }}
 
       # To have features such as run as non root
-{{- if (eq .Values.security.runAsNonRoot true) }}
-      securityContext:
-{{ toYaml .Values.security | indent 8 }}
-{{- else if .Values.securityContext }}
+{{- if .Values.securityContext }}
       securityContext:
 {{ toYaml .Values.securityContext | indent 8 }}
+{{- else if (eq .Values.security.runAsNonRoot true) }}
+      securityContext:
+{{ toYaml .Values.security | indent 8 }}
 {{- end }}
 
 {{- /*
