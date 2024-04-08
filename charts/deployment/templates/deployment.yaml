@@ -132,6 +132,11 @@ spec:
 {{ toYaml .Values.lifecycle | indent 12 }}
 {{- end }}
 
+{{- if .Values.image.securityContext }}
+          securityContext:
+{{ toYaml .Values.image.securityContext | indent 12 }}
+{{- end }}
+
 
           env:
             # Default env variables we want all containers to have

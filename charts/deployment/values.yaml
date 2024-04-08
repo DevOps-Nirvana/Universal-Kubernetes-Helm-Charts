@@ -37,6 +37,13 @@ image:
   ##
   imagePullSecrets: []
 
+  # In case you want to change the securityContext for the container
+  # securityContext:
+  #   capabilities:
+  #     add:
+  #     - SYS_ADMIN
+  #   privileged: true
+
 # Ingress definitions
 ingress:
   enabled: false
@@ -227,12 +234,11 @@ extraContainers: []
 volumes: []
 volumeMounts: []
 
-# In case you want to change the securityContext
+# In case you want to change the securityContext for the pod
 # securityContext:
-#   capabilities:
-#     add:
-#     - SYS_ADMIN
-#   privileged: true
+#   runAsNonRoot: true
+#   runAsUser: 1000
+#   fsGroup: 1000
 
 # For AWS Security Groups
 securityGroupIDs: []
