@@ -58,7 +58,13 @@ spec:
           {{- end }}
 
         # To have features such as run as non root
-        {{- if (eq $toplevel.Values.security.runAsNonRoot true) }}
+        {{- if $job.podSecurityContext }}
+          securityContext:
+{{ toYaml $job.podSecurityContext | indent 12 }}
+        {{- else if $toplevel.Values.podSecurityContext }}
+          securityContext:
+{{ toYaml $toplevel.Values.podSecurityContext | indent 12 }}
+        {{- else if (eq $toplevel.Values.security.runAsNonRoot true) }}
           securityContext:
 {{ toYaml $toplevel.Values.security | indent 12 }}
         {{- end }}
@@ -114,6 +120,15 @@ spec:
 {{- if $toplevel.Values.image.imagePullPolicy }}
               imagePullPolicy: {{ $toplevel.Values.image.imagePullPolicy }}
 {{- end }}
+
+{{- if $job.containerSecurityContext }}
+              securityContext:
+{{ toYaml $job.containerSecurityContext | indent 16 }}
+{{- else if $toplevel.Values.containerSecurityContext }}
+              securityContext:
+{{ toYaml $toplevel.Values.containerSecurityContext | indent 16 }}
+{{- end }}
+
               env:
                 # Default env variables we want all containers to have
                 - name: "POD_NAME"

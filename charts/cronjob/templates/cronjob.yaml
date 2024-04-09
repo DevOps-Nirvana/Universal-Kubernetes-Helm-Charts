@@ -51,7 +51,10 @@ spec:
           {{- end }}
 
         # To have features such as run as non root
-        {{- if (eq .Values.security.runAsNonRoot true) }}
+        {{- if .Values.podSecurityContext }}
+          securityContext:
+{{ toYaml .Values.podSecurityContext | indent 12 }}
+        {{- else if (eq .Values.security.runAsNonRoot true) }}
           securityContext:
 {{ toYaml .Values.security | indent 12 }}
         {{- end }}
@@ -105,6 +108,12 @@ spec:
 {{- if .Values.image.imagePullPolicy }}
               imagePullPolicy: {{ .Values.image.imagePullPolicy }}
 {{- end }}
+
+{{- if .Values.containerSecurityContext }}
+              securityContext:
+{{ toYaml .Values.containerSecurityContext | indent 16 }}
+{{- end }}
+
               env:
                 # Default env variables we want all containers to have
                 - name: "POD_NAME"
