@@ -41,16 +41,22 @@ image:
 # Everything under 'podSecurityContext' will be copied as-is under the 'securityContext' key for the pod spec
 # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
 # NOTE: this replaces the old "security" key, which is now deprecated
-# 
+#
 # podSecurityContext:
 #   runAsNonRoot: true
 #   runAsUser: 1000
 #   fsGroup: 1000
 
+# DEPRECATED / DO NOT USE, use podSecurityContext instead, this will be removed in a future release
+security:
+  runAsNonRoot: false
+  runAsUser: 1000
+  fsGroup: 1000
+
 # To change the securityContext for the container. There are some different options k8s allows here vs at the pod level above.
 # Everything under 'containerSecurityContext' will be copied as-is under the 'securityContext' key for the container spec
 # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-# 
+#
 # containerSecurityContext:
 #   capabilities:
 #     add:
