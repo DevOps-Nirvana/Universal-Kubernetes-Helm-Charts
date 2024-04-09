@@ -76,9 +76,9 @@ spec:
       terminationGracePeriodSeconds: {{ default "30" .Values.terminationGracePeriodSeconds }}
 
       # To have features such as run as non root
-{{- if .Values.securityContext }}
+{{- if .Values.podSecurityContext }}
       securityContext:
-{{ toYaml .Values.securityContext | indent 8 }}
+{{ toYaml .Values.podSecurityContext | indent 8 }}
 {{- else if (eq .Values.security.runAsNonRoot true) }}
       securityContext:
 {{ toYaml .Values.security | indent 8 }}
@@ -132,6 +132,10 @@ spec:
 {{ toYaml .Values.lifecycle | indent 12 }}
 {{- end }}
 
+{{- if .Values.containerSecurityContext }}
+          securityContext:
+{{ toYaml .Values.containerSecurityContext | indent 12 }}
+{{- end }}
 
           env:
             # Default env variables we want all containers to have

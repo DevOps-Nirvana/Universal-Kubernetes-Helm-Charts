@@ -37,12 +37,25 @@ image:
   ##
   imagePullSecrets: []
 
-  # In case you want to change the securityContext for the container
-  # securityContext:
-  #   capabilities:
-  #     add:
-  #     - SYS_ADMIN
-  #   privileged: true
+# To change the securityContext for the pod.
+# Everything under 'podSecurityContext' will be copied as-is under the 'securityContext' key for the pod spec
+# https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+# NOTE: this replaces the old "security" key, which is now deprecated
+# 
+# podSecurityContext:
+#   runAsNonRoot: true
+#   runAsUser: 1000
+#   fsGroup: 1000
+
+# To change the securityContext for the container. There are some different options k8s allows here vs at the pod level above.
+# Everything under 'containerSecurityContext' will be copied as-is under the 'securityContext' key for the container spec
+# https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+# 
+# containerSecurityContext:
+#   capabilities:
+#     add:
+#     - SYS_ADMIN
+#   privileged: true
 
 # Ingress definitions
 ingress:
@@ -233,12 +246,6 @@ extraContainers: []
 # Volumes added to the pod eg: for cloudsql
 volumes: []
 volumeMounts: []
-
-# In case you want to change the securityContext for the pod
-# securityContext:
-#   runAsNonRoot: true
-#   runAsUser: 1000
-#   fsGroup: 1000
 
 # For AWS Security Groups
 securityGroupIDs: []
