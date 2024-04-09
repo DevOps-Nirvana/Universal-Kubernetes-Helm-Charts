@@ -36,6 +36,10 @@ cronjobs:
     args:                   # Optional, if not set use top level definition in image.args
     - doesnt
     - work
+    # You can specifiy these here too, to override the top level definition for a specific job
+    # See above for example configs
+    # podSecurityContext: 
+    # containerSecurityContext:
 
 # This restricts jobs from every running concurrently
 concurrencyPolicy: "Forbid" # Can also be "Allow"
