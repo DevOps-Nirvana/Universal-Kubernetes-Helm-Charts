@@ -13,11 +13,11 @@ metadata:
   annotations:
     # Our service annotations (old method, backwards compatability)
 {{- with .Values.serviceAnnotations }}
-{{ toYaml . | indent 4 }}
+{{ tpl ( toYaml .) $ | indent 4 }}
 {{- end }}
     # Our service annotations (new)
 {{- with .Values.service.annotations }}
-{{ toYaml . | indent 4 }}
+{{ tpl ( toYaml .) $ | indent 4 }}
 {{- end }}
 
   # include labels for this service to identify it
