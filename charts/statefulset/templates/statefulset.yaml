@@ -62,6 +62,12 @@ spec:
 {{- end }}
     spec:
 
+{{- if .Values.shareProcessNamespace }}
+{{- if (eq .Values.shareProcessNamespace true) }}
+      shareProcessNamespace: true
+{{- end }}
+{{- end }}
+
       # If we have a hostname set, set it here
 {{- if .Values.hostname }}
       hostname: {{ with .Values.hostname }}{{ tpl . $ | quote }}{{- end }}

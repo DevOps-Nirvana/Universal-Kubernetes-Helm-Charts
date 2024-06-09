@@ -47,6 +47,13 @@ spec:
 {{- end }}
 {{- end }}
         spec:
+
+{{- if $toplevel.Values.shareProcessNamespace }}
+{{- if (eq $toplevel.Values.shareProcessNamespace true) }}
+          shareProcessNamespace: true
+{{- end }}
+{{- end }}
+
           # If we have a priority class set, set it here
 {{- if $toplevel.Values.priorityClassName }}
           priorityClassName: "{{ $toplevel.Values.priorityClassName }}"

@@ -67,6 +67,14 @@ startingDeadlineSeconds: 600
 # See: https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
 priorityClassName: ""
 
+# Share process namespace to allow sidecars to see each others processes.  You can use this feature to configure
+#    cooperating containers, such as a log handler sidecar container, or to troubleshoot container images that don't
+#    include debugging utilities like a shell.
+#
+# NOTE/WARNING: Enabling this may break certain containers that expect/demand their main process to be process #1.
+# See: https://kubernetes.io/docs/tasks/configure-pod-container/share-process-namespace/
+shareProcessNamespace: false
+
 # How many retries this cronjob will have by default
 backoffLimit: 0
 
