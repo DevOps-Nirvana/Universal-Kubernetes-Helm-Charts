@@ -29,6 +29,9 @@ spec:
 {{- if default false .Values.service.headless }}
   clusterIP: None
 {{- end }}
+{{- if eq .Values.service.allocateLoadBalancerNodePorts false }}
+  allocateLoadBalancerNodePorts: {{ .Values.service.allocateLoadBalancerNodePorts }}
+{{- end }}
 {{- if .Values.service.externalTrafficPolicy }}
   externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
 {{- end }}
