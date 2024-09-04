@@ -29,8 +29,12 @@ spec:
 
   # How we rollout in a rolling update type scenario, this is for deployments only
   strategy:
-{{- with .Values.deploymentStrategy }}
-{{ toYaml . | indent 4 }}
+    type: {{ .Values.deploymentStrategy.type }}
+{{- if and (eq .Values.deploymentStrategy.type "RollingUpdate") (hasKey .Values.deploymentStrategy "rollingUpdate") }}
+    rollingUpdate:
+{{- with .Values.deploymentStrategy.rollingUpdate }}
+{{ toYaml . | indent 6 }}
+{{- end }}
 {{- end }}
 
   # These selectors to match this object with previous versions of this object
