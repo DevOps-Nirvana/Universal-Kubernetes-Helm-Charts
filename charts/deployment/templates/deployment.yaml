@@ -292,6 +292,10 @@ spec:
 {{- else if eq .Values.livenessProbe.probeType "tcpSocket" }}
             tcpSocket:
               port: {{ .Values.livenessProbe.port }}
+{{- else if eq .Values.livenessProbe.probeType "grpc" }}
+            grpc:
+              port: {{ .Values.livenessProbe.port }}
+              service: {{ .Values.livenessProbe.service }}
 {{- else if eq .Values.livenessProbe.probeType "exec" }}
             exec:
               command:
@@ -317,6 +321,10 @@ spec:
 {{- else if eq .Values.readinessProbe.probeType "tcpSocket" }}
             tcpSocket:
               port: {{ .Values.readinessProbe.port }}
+{{- else if eq .Values.readinessProbe.probeType "grpc" }}
+            grpc:
+              port: {{ .Values.readinessProbe.port }}
+              service: {{ .Values.readinessProbe.service }}
 {{- else if eq .Values.readinessProbe.probeType "exec" }}
             exec:
               command:

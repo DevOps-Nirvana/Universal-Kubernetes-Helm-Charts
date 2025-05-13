@@ -180,6 +180,7 @@ livenessProbe:
   # Specify either httpGet, tcpSocket or exec
   # httpGet uses scheme, path and port (below)
   # tcpSocket uses port (below)
+  # grpc uses port (numeric) and service (below)
   # exec uses command (below)
   probeType: httpGet
 
@@ -189,7 +190,7 @@ livenessProbe:
   port: default-service
   command:
     - ls -la /
-
+  service: ""
 
 # readinessProbes are used to determine when a container is ready to start accepting traffic
 readinessProbe:
@@ -203,6 +204,7 @@ readinessProbe:
   # Specify either httpGet, tcpSocket or exec
   # httpGet uses scheme, path and port (below)
   # tcpSocket uses port (below)
+  # grpc uses port (numeric) and service (below)
   # exec uses command (below)
   probeType: httpGet
 
@@ -212,6 +214,7 @@ readinessProbe:
   port: default-service
   command:
     - ls -la /
+  service: ""
 
 # Adjust the DNS configuration of your pods
 # https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-config
